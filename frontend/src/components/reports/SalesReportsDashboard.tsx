@@ -121,22 +121,21 @@ export function SalesReportsDashboard() {
                 })
             ])
 
+
+            console.log(todayData, weekData, monthData, itemData, paymentData);
+
             // Helper to process POS Register results
             const processPosRegister = (response: any): SalesData => {
-                const results = response.result || []
+                const results = response?.message?.result || []
                 if (!Array.isArray(results)) return { amount: 0, transactions: 0 }
 
                 const amount = results.reduce((sum: number, row: any) => sum + (row.grand_total || 0), 0)
                 const transactions = results.length
-                // Deduplicate transactions based on invoice name if needed, but pos register usually unique per invoice row?
-                // Actually POS register might show payments. 
-                // Let's rely on standard assumption: One row per invoice in 'POS Register' usually, or use distinct invoice count.
-                // Assuming result length = transaction count for now.
                 return { amount, transactions }
             }
 
             // Process Items (Month scope)
-            const itemResults = itemData.result || []
+            const itemResults = itemData?.message?.result || []
             const sortedItems = [...itemResults]
                 .sort((a: any, b: any) => (b.amount || 0) - (a.amount || 0))
                 .slice(0, 5)
@@ -153,13 +152,13 @@ export function SalesReportsDashboard() {
             }))
 
             // Process Payments (Month scope)
-            const paymentResults = paymentData.result || []
+            const paymentResults = paymentData?.message?.result || []
             const paymentMap = new Map<string, { amount: number, count: number }>()
             let totalPayments = 0
 
             paymentResults.forEach((row: any) => {
-                const mode = row.mode_of_payment
-                const amount = row.paid_amount || 0
+                const mode = row.mode_of_payment || row.payment_mode || "Unknown"
+                const amount = row.paid_amount || row.amount || row.payments || 0
                 if (mode && amount > 0) {
                     const existing = paymentMap.get(mode) || { amount: 0, count: 0 }
                     paymentMap.set(mode, {
