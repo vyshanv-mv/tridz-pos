@@ -69,7 +69,7 @@ export function CreditNoteDetailView({
                                         <p className="text-xs sm:text-sm text-muted-foreground">{selectedInvoiceInfo.contact_mobile || selectedInvoiceInfo.mobile_no}</p>
                                     </div>
                                     <div className="self-end sm:self-auto">
-                                        <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-green-100 text-green-800 text-[10px] sm:text-xs font-semibold rounded-full uppercase">
+                                        <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-green-100 text-green-800 text-sm sm:text-xs font-semibold rounded-full uppercase">
                                             {selectedInvoiceInfo.status}
                                         </span>
                                     </div>

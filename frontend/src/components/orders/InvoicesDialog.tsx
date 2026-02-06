@@ -105,7 +105,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
         }
         return {
             text: inv.status,
-            className: 'bg-green-100 text-green-700'
+            className: ' text-green-500'
         }
     }
 
@@ -137,7 +137,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
                             placeholder="Search by customer, mobile, or status..."
                             value={searchVal}
                             onChange={(e) => setSearchVal(e.target.value)}
-                            className="pl-8"
+                            className="pl-8 bg-muted/20"
                         />
                     </div>
                 </div>
@@ -174,7 +174,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
                                                     <span className="block font-bold text-emerald-500 text-base">
                                                         {formatCurrency(inv.grand_total)}
                                                     </span>
-                                                    <span className={`px-2.5 py-1 text-xs font-semibold rounded-full uppercase ${statusBadge.className}`}>
+                                                    <span className={`text-sm font-bold text-emerald-500 uppercase tracking-wider px-1.5 py-0.5 rounded w-fit ${statusBadge.className}`}>
                                                         {statusBadge.text}
                                                     </span>
                                                 </div>

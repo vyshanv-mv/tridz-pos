@@ -55,17 +55,17 @@ export function InvoiceDetailView({
                                         </div>
                                         <div>
                                             {selectedInvoiceInfo.docstatus === 1 && selectedInvoiceInfo.is_return !== 1 && (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded bg-green-100 text-green-700 uppercase">
+                                                <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-green-100 text-green-800 text-sm sm:text-xs font-semibold rounded-full uppercase">
                                                     {selectedInvoiceInfo.status}
                                                 </span>
                                             )}
                                             {selectedInvoiceInfo.is_return === 1 && (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded bg-red-100 text-red-700 uppercase">
+                                                <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-green-100 text-green-800 text-sm sm:text-xs font-semibold rounded-full uppercase">
                                                     Return
                                                 </span>
                                             )}
                                             {selectedInvoiceInfo.docstatus === 0 && (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-700 uppercase">
+                                                <span className="px-2.5 py-1 sm:px-3 sm:py-1.5 bg-green-100 text-green-800 text-sm sm:text-xs font-semibold rounded-full uppercase">
                                                     Draft
                                                 </span>
                                             )}
