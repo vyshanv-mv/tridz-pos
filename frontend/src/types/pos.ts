@@ -7,6 +7,7 @@ export interface POSProfile {
   customer?: string
   disabled?: number
   print_format?: string
+  print_receipt_on_order_complete?: number
   applicable_for_users?: {
     user: string
   }[]

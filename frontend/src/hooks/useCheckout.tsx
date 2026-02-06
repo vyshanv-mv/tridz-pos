@@ -47,11 +47,15 @@ export function useCheckout() {
             if (invoice?.name) {
                 await submitInvoice(invoice.name)
                 setDraftInvoice(invoice.name)
-                printERPNextDoc({
-                    doctype: "POS Invoice",
-                    name: invoice.name,
-                    format: profile.print_format || "POS Invoice"
-                })
+
+                // Only print if enabled in POS Profile
+                if (profile.print_receipt_on_order_complete) {
+                    printERPNextDoc({
+                        doctype: "POS Invoice",
+                        name: invoice.name,
+                        format: profile.print_format || "POS Invoice"
+                    })
+                }
             }
 
             toast({
