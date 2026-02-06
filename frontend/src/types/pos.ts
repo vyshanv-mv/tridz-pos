@@ -6,6 +6,7 @@ export interface POSProfile {
   warehouse: string
   customer?: string
   disabled?: number
+  print_format?: string
   applicable_for_users?: {
     user: string
   }[]

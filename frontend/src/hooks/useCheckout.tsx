@@ -49,7 +49,8 @@ export function useCheckout() {
                 setDraftInvoice(invoice.name)
                 printERPNextDoc({
                     doctype: "POS Invoice",
-                    name: invoice.name
+                    name: invoice.name,
+                    format: profile.print_format || "POS Invoice"
                 })
             }
 

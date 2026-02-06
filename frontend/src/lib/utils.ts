@@ -16,7 +16,7 @@ export function formatCurrency(amount: number) {
 interface PrintOptions {
     doctype?: string
     name: string
-    format?: string
+    format: string
     noLetterhead?: boolean
     autoPrint?: boolean
 }
@@ -25,7 +25,7 @@ interface PrintOptions {
 export function printERPNextDoc({
     doctype = "POS Invoice",
     name,
-    format = "POS Invoice",
+    format,
     noLetterhead = true,
     autoPrint = false,
 }: PrintOptions) {
