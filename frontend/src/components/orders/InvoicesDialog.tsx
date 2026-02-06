@@ -51,6 +51,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
         try {
             const data = await getAllInvoices(pageNum, 5, search)
 
+
             if (pageNum === 1) {
                 setInvoices(data.invoices)
             } else {
