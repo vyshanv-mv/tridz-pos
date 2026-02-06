@@ -294,7 +294,7 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
                             placeholder="Search by customer, mobile, or status..."
                             value={searchVal}
                             onChange={(e) => setSearchVal(e.target.value)}
-                            className="pl-8"
+                            className="pl-8 bg-muted/20"
                         />
                     </div>
                 </div>

@@ -12,10 +12,13 @@ import { useState } from "react"
 import { CreditNoteDialog } from "@/components/orders/CreditNoteDialog"
 import { InvoicesDialog } from "@/components/orders/InvoicesDialog"
 
+import { ReportsDialog } from "@/components/reports/ReportsDialog"
+
 export function UserProfile() {
     const { currentUser, logout } = useUserStore()
     const [showCreditNote, setShowCreditNote] = useState(false)
     const [showInvoices, setShowInvoices] = useState(false)
+    const [showReports, setShowReports] = useState(false)
 
     // Fallback for user name if not loaded or available
     const userName = currentUser?.full_name || currentUser?.name || "Guest User"
@@ -39,9 +42,12 @@ export function UserProfile() {
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="cursor-pointer">
+                    <DropdownMenuItem
+                        className="cursor-pointer"
+                        onClick={() => setShowReports(true)}
+                    >
                         <BarChart3 className="mr-2 h-4 w-4" />
-                        <span>Reports</span>
+                        <span>Report</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         className="cursor-pointer"
@@ -73,6 +79,11 @@ export function UserProfile() {
             <InvoicesDialog
                 open={showInvoices}
                 onOpenChange={setShowInvoices}
+            />
+
+            <ReportsDialog
+                open={showReports}
+                onOpenChange={setShowReports}
             />
         </>
     )

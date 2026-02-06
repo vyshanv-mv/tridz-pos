@@ -74,7 +74,7 @@ export async function getPaidInvoices(page: number = 1, pageSize: number = 20, q
         db.getDocList(DOCTYPES.POS_INVOICE, {
             filters: filters,
             orFilters: or_filters,
-            fields: ["name", "customer", "contact_mobile", "posting_date", "posting_time", "grand_total", "status", "currency", "is_return", "total_qty"],
+            fields: ["name", "customer", "contact_mobile", "posting_date", "posting_time", "grand_total", "status", "currency", "is_return", "total_qty", "items"],
             orderBy: {
                 field: "modified",
                 order: "desc"
@@ -118,7 +118,7 @@ export async function getAllInvoices(page: number = 1, pageSize: number = 5, que
         db.getDocList(DOCTYPES.POS_INVOICE, {
             filters: [],
             orFilters: or_filters,
-            fields: ["name", "customer", "contact_mobile", "posting_date", "posting_time", "grand_total", "status", "currency", "is_return", "total_qty", "docstatus"],
+            fields: ["name", "customer", "contact_mobile", "posting_date", "posting_time", "grand_total", "status", "currency", "is_return", "total_qty", "docstatus", "items"],
             orderBy: {
                 field: "modified",
                 order: "desc"
