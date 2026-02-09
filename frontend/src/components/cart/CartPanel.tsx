@@ -2,7 +2,8 @@ import { useState } from "react"
 import { useCheckout } from "@/hooks/useCheckout"
 import { CartSummary } from "./CartSummary"
 import { Button } from "@/components/ui/button"
-import { useCartStore, selectSubtotal, selectActiveItems } from "@/store/cartStore"
+import { useCartStore, selectActiveItems, selectGrandTotal } from "@/store/cartStore"
+import { usePosStore } from "@/store/posStore"
 import { CartItem } from "./CartItem"
 import { PaymentDialog } from "./PaymentDialog"
 import { useToast } from "@/hooks/use-toast"
@@ -23,8 +24,9 @@ import {
 
 export function CartPanel() {
   const { addItem, removeItem, reduceItem } = useCartStore()
+  const { profile } = usePosStore()
   const items = useCartStore(selectActiveItems)
-  const subtotal = useCartStore(selectSubtotal)
+  const grandTotal = useCartStore((state) => selectGrandTotal(state, profile))
   const { toast } = useToast()
   const { processPayment } = useCheckout()
 
@@ -118,7 +120,7 @@ export function CartPanel() {
       <PaymentDialog
         open={isPaymentOpen}
         onOpenChange={setIsPaymentOpen}
-        total={subtotal}
+        total={grandTotal}
         onConfirm={handlePaymentConfirm}
       />
 

@@ -69,3 +69,10 @@ export async function getOpeningEntry(posProfile: string) {
 
   return entries.length ? entries[0] : null
 }
+
+/**
+ * Get Sales Taxes and Charges Template details
+ */
+export async function getTaxTemplate(templateName: string) {
+  return await db.getDoc(DOCTYPES.SALES_TAXES_AND_CHARGES_TEMPLATE, templateName)
+}

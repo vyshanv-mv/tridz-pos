@@ -11,7 +11,7 @@ import { OpeningEntryError } from "@/components/layout/OpeningEntryError"
 import { NoPosProfileError } from "@/components/layout/NoPosProfileError"
 import { Button } from "@/components/ui/button"
 import { PaymentDialog } from "@/components/cart/PaymentDialog"
-import { useCartStore, selectSubtotal, selectActiveItems } from "@/store/cartStore"
+import { useCartStore, selectActiveItems, selectGrandTotal } from "@/store/cartStore"
 import type { Customer } from "@/types/customer"
 import { useCheckout } from "@/hooks/useCheckout"
 import { AlertCircle } from "lucide-react"
@@ -22,7 +22,7 @@ export default function Pos() {
   const { initSession } = useUserStore()
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
   const activeItems = useCartStore(selectActiveItems)
-  const subtotal = useCartStore(selectSubtotal)
+  const grandTotal = useCartStore((state) => selectGrandTotal(state, profile))
 
   const { processPayment } = useCheckout()
 
@@ -137,7 +137,7 @@ export default function Pos() {
         >
           <span>Checkout ({totalItemsCount} items)</span>
           <span className="opacity-60 mx-1">•</span>
-          <span>₹{subtotal.toFixed(2)}</span>
+          <span>₹{grandTotal.toFixed(2)}</span>
         </Button>
       </div>
 
@@ -145,7 +145,7 @@ export default function Pos() {
       <PaymentDialog
         open={isPaymentOpen}
         onOpenChange={setIsPaymentOpen}
-        total={subtotal}
+        total={grandTotal}
         onConfirm={handlePaymentConfirm}
       />
     </div>

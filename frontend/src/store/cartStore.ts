@@ -187,6 +187,59 @@ export const selectSubtotal = (state: CartState) => {
   return activeOrder.items.reduce((sum, item) => sum + (item.qty * item.rate), 0)
 }
 
+export const selectTax = (state: CartState, profile: any) => {
+  const subtotal = selectSubtotal(state)
+  if (!profile?.taxes || profile.taxes.length === 0) return 0
+
+  let totalTax = 0
+  let netTotal = subtotal
+
+  // Handle inclusive taxes first to find the true net total
+  const inclusiveTaxes = profile.taxes.filter((t: any) => t.included_in_print_rate)
+  if (inclusiveTaxes.length > 0) {
+    const totalInclusiveRate = inclusiveTaxes.reduce((sum: number, t: any) => sum + (t.rate || 0), 0)
+    netTotal = subtotal / (1 + totalInclusiveRate / 100)
+  }
+
+  // Calculate actual tax amounts
+  profile.taxes.forEach((tax: any) => {
+    if (tax.charge_type === "On Net Total") {
+      const amount = netTotal * (tax.rate / 100)
+      totalTax += amount
+    }
+    // Add other charge types if needed (Actual, etc.)
+  })
+
+  return totalTax
+}
+
+export const selectGrandTotal = (state: CartState, profile: any) => {
+  const subtotal = selectSubtotal(state)
+  const taxes = profile?.taxes || []
+
+  // If taxes are inclusive, grand total is just the subtotal (which is the sum of inclusive rates)
+  const hasInclusive = taxes.some((t: any) => t.included_in_print_rate)
+  if (hasInclusive) {
+    // If there are also exclusive taxes on top of inclusive ones, it gets complex.
+    // ERPNext usually doesn't mix them in a simple way in POS, but let's handle basic exclusive on top of net.
+    const totalInclusiveRate = taxes.filter((t: any) => t.included_in_print_rate)
+      .reduce((sum: number, t: any) => sum + (t.rate || 0), 0)
+    const netTotal = subtotal / (1 + totalInclusiveRate / 100)
+
+    const exclusiveTax = taxes.filter((t: any) => !t.included_in_print_rate)
+      .reduce((sum: number, t: any) => {
+        if (t.charge_type === "On Net Total") return sum + (netTotal * (t.rate / 100))
+        return sum
+      }, 0)
+
+    return subtotal + exclusiveTax
+  }
+
+  // Purely exclusive taxes
+  const taxAmount = selectTax(state, profile)
+  return subtotal + taxAmount
+}
+
 // Helper selector for components to get items easily
 export const selectActiveItems = (state: CartState) => {
   return state.orders.find(o => o.id === state.activeOrderId)?.items || []

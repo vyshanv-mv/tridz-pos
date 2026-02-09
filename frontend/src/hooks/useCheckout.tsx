@@ -41,6 +41,8 @@ export function useCheckout() {
                 warehouse: profile.warehouse,
                 items: activeItems as any,
                 payments,
+                taxes: profile.taxes,
+                taxes_and_charges: profile.taxes_and_charges,
                 return_against: activeOrder?.return_against
             })
 

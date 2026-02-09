@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import type { POSProfile, POSOpeningEntry } from "@/types/pos"
-import { getPOSProfile, getOpeningEntry } from "@/api/pos"
+import { getPOSProfile, getOpeningEntry, getTaxTemplate } from "@/api/pos"
 
 interface PosState {
   profile: POSProfile | null
@@ -30,6 +30,16 @@ export const usePosStore = create<PosState>((set) => ({
       if (!opening) {
         sessionStorage.clear()
         throw new Error("POS Opening Entry not found. Please create a POS Opening Entry first.")
+      }
+
+      // Fetch taxes if available
+      if (profile.taxes_and_charges) {
+        try {
+          const taxTemplate = await getTaxTemplate(profile.taxes_and_charges)
+          profile.taxes = taxTemplate.taxes || []
+        } catch (e) {
+          console.error("Failed to load tax template:", e)
+        }
       }
 
       set({
