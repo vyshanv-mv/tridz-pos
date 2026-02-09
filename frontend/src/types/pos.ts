@@ -18,6 +18,19 @@ export interface POSProfile {
   item_groups: {
     item_group: string
   }[]
+  taxes_and_charges?: string
+  taxes?: TaxRow[]
+}
+
+export interface TaxRow {
+  charge_type: string
+  account_head: string
+  description?: string
+  rate: number
+  included_in_print_rate?: number
+  cost_center?: string
+  tax_amount?: number
+  total?: number
 }
 
 export interface POSOpeningEntry {

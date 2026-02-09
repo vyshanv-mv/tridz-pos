@@ -28,6 +28,9 @@ export const DOCTYPES = {
     WAREHOUSE: "Warehouse",
     CURRENCY: "Currency",
 
+    // Taxes
+    SALES_TAXES_AND_CHARGES_TEMPLATE: "Sales Taxes and Charges Template",
+
     // User
     USER: "User",
 } as const
