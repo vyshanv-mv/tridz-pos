@@ -180,16 +180,30 @@ export function CustomerSearch({ selectedCustomer, onSelect }: CustomerSearchPro
                                 <p className="text-xs font-semibold mb-2 text-primary">New Customer Details</p>
                                 <div className="space-y-3">
                                     <div className="space-y-1">
-                                        <Label className="text-[10px] uppercase text-muted-foreground">Mobile Number</Label>
+                                        <div className="flex justify-between items-center">
+                                            <Label className="text-sm uppercase text-muted-foreground">Mobile Number</Label>
+                                            {customerMobile && customerMobile.length < 6 && (
+                                                <span className="text-sm text-red-500 font-medium">Invalid number</span>
+                                            )}
+                                            {customerMobile && customerMobile.length > 10 && (
+                                                <span className="text-sm text-red-500 font-medium">Invalid number</span>
+                                            )}
+                                        </div>
                                         <Input
                                             value={customerMobile}
-                                            onChange={(e) => setCustomerMobile(e.target.value)}
-                                            className="h-9 text-sm"
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/\D/g, '')
+                                                setCustomerMobile(val)
+                                            }}
+                                            className={cn(
+                                                "h-9 text-sm",
+                                                customerMobile && (customerMobile.length < 6 || customerMobile.length > 10) && "border-red-500 focus-visible:ring-red-500"
+                                            )}
                                             placeholder="Enter mobile number..."
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <Label className="text-[10px] uppercase text-muted-foreground">Full Name</Label>
+                                        <Label className="text-sm uppercase text-muted-foreground">Full Name</Label>
                                         <Input
                                             autoFocus
                                             placeholder="Enter customer name..."
@@ -203,7 +217,7 @@ export function CustomerSearch({ selectedCustomer, onSelect }: CustomerSearchPro
                                             size="sm"
                                             className="flex-1 h-9"
                                             onClick={handleAddCustomer}
-                                            disabled={isCreating || !newCustomerName}
+                                            disabled={isCreating || !newCustomerName || customerMobile.length < 6 || customerMobile.length > 10}
                                         >
                                             {isCreating ? "Creating..." : "Create & Select"}
                                         </Button>
