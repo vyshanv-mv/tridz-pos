@@ -14,9 +14,11 @@ export async function createDraftPOSInvoice(data: {
     taxes?: any[]
     taxes_and_charges?: string
     return_against?: string
+    grand_total?: number
 }) {
     // Calculate totals - ERPNext will recalculate, but we send our calculated values to be sure
-    const subtotal = data.items.reduce((sum, item) => sum + (item.qty * item.rate), 0)
+    const round = (val: number) => Math.round(val * 100) / 100
+    const subtotal = round(data.items.reduce((sum, item) => sum + (item.qty * item.rate), 0))
 
     let totalTaxes = 0
     if (data.taxes) {
@@ -31,23 +33,24 @@ export async function createDraftPOSInvoice(data: {
             : subtotal
 
         data.taxes.forEach(t => {
-            t.tax_amount = netTotal * (t.rate / 100)
+            t.tax_amount = round(netTotal * (t.rate / 100))
             t.base_tax_amount = t.tax_amount // Assuming same currency for now
             totalTaxes += t.tax_amount
         })
     }
 
-    const grandTotal = subtotal + (data.taxes?.filter(t => !t.included_in_print_rate).reduce((s, t) => s + t.tax_amount, 0) || 0)
+    const grandTotal = data.grand_total !== undefined
+        ? Math.round(data.grand_total)
+        : Math.round(subtotal + (data.taxes?.filter(t => !t.included_in_print_rate).reduce((s, t) => s + t.tax_amount, 0) || 0))
 
-    const paymentAmount = data.payments.length > 0
-        ? data.payments.reduce((sum, p) => sum + p.amount, 0)
-        : grandTotal
+    // For POS, paid_amount MUST equal grand_total
+    // We strictly use grandTotal for paid_amount regardless of minor rounding in payments table sum
+    const payments = data.payments.map(p => ({
+        ...p,
+        amount: round(p.amount)
+    }))
 
-    const payments = data.payments.length > 0
-        ? data.payments
-        : [] // Will fail validation - payments are mandatory for POS
-
-    return await db.createDoc(DOCTYPES.POS_INVOICE, {
+    const payload = {
         doctype: DOCTYPES.POS_INVOICE,
         is_pos: 1,
         customer: data.customer,
@@ -71,14 +74,16 @@ export async function createDraftPOSInvoice(data: {
 
         // TAXES
         taxes: data.taxes || [],
-        total_taxes_and_charges: totalTaxes,
+        total_taxes_and_charges: round(totalTaxes),
 
         // MANDATORY POS FIELDS
         payments: payments,
-        paid_amount: paymentAmount,
+        paid_amount: grandTotal,
         grand_total: grandTotal,
         write_off_amount: 0,
-    })
+    }
+
+    return await db.createDoc(DOCTYPES.POS_INVOICE, payload)
 }
 
 export async function getPaidInvoices(page: number = 1, pageSize: number = 20, query: string = "") {

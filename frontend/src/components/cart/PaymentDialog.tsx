@@ -56,12 +56,25 @@ export function PaymentDialog({
             setProcessing(true)
             const payAmount = parseFloat(amount) || 0
 
-            // Allow negative amounts for returns/credit notes
-            const amountToRecord = Math.abs(payAmount) >= Math.abs(total) ? total : payAmount
+            // Round to 2 decimal places to avoid floating point issues
+            const round = (val: number) => Math.round(val * 100) / 100
 
+            const roundedPayAmount = round(payAmount)
+            const roundedTotal = round(total)
+
+            // For POS, payment must be equal to or greater than total (change is handled by ERPNext/UI)
+            // But the amount sent to the POS Invoice 'payments' table MUST sum exactly to grand_total
+            if (Math.abs(roundedPayAmount) < Math.abs(roundedTotal)) {
+                alert("Partial payments are not allowed. Please enter the full amount.")
+                setProcessing(false)
+                return
+            }
+
+            // We always record exactly the grand total in the payments table for POS
+            // (The difference is considered 'change' and is not usually in the payments table unless specifically tracked)
             const payments: Payment[] = [{
                 mode_of_payment: selectedMode,
-                amount: amountToRecord
+                amount: total // Use exactly the total (grand total)
             }]
 
             await onConfirm(payments, activeOrder?.customer)

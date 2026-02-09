@@ -50,12 +50,9 @@ export default function Pos() {
             fetchItems(profile.selling_price_list),
             fetchCategories(),
           ])
-          console.log("Items and categories loaded")
         } catch (error) {
           console.error("Failed to load items:", error)
         }
-      } else {
-        console.log("Waiting for POS profile...")
       }
     }
     loadData()

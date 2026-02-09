@@ -232,12 +232,12 @@ export const selectGrandTotal = (state: CartState, profile: any) => {
         return sum
       }, 0)
 
-    return subtotal + exclusiveTax
+    return Math.round(subtotal + exclusiveTax)
   }
 
   // Purely exclusive taxes
   const taxAmount = selectTax(state, profile)
-  return subtotal + taxAmount
+  return Math.round(subtotal + taxAmount)
 }
 
 // Helper selector for components to get items easily

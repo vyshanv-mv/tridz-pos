@@ -31,11 +31,11 @@ export function TopBar() {
         <h2 className="text-primary hidden md:block md:font-bold text-sm tracking-tighter"> Tridz POS</h2>
       </div>
 
-      <div className="flex-1 max-w-2xl px-1">
+      <div className="flex-1 max-w-lg px-1">
         <div className="relative">
           <Input
             placeholder="Search items by name"
-            className="w-full pr-10 h-[3.25rem] md:h-10 border-primary border-[1.5px] rounded-2xl md:rounded-xl text-base md:text-sm text-foreground bg-card placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:border-primary pl-4"
+            className="w-full pr-10 h-[3.25rem] md:h-10 border-primary border-2 rounded-2xl md:rounded-xl text-base md:text-sm text-foreground bg-card placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:border-primary pl-4"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
