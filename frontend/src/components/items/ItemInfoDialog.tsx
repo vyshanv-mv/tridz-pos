@@ -18,7 +18,7 @@ export function ItemInfoDialog({ item, open, onOpenChange }: ItemInfoDialogProps
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px] p-0 gap-0">
+            <DialogContent className="w-[90vw] sm:max-w-[500px] p-0 gap-0 overflow-hidden rounded-lg">
                 <DialogHeader className="px-6 pt-6 pb-4 relative">
                     <DialogTitle className="text-xl font-semibold text-foreground">
                         Stock Information
