@@ -14,7 +14,8 @@ import { PaymentDialog } from "@/components/cart/PaymentDialog"
 import { useCartStore, selectActiveItems, selectGrandTotal } from "@/store/cartStore"
 import type { Customer } from "@/types/customer"
 import { useCheckout } from "@/hooks/useCheckout"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Plus, CircleCheck } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function Pos() {
   const { loadProfile, profile, loading: posLoading, error: posError } = usePosStore()
@@ -25,6 +26,8 @@ export default function Pos() {
   const grandTotal = useCartStore((state) => selectGrandTotal(state, profile))
 
   const { processPayment } = useCheckout()
+  const { newOrder } = useCartStore()
+  const { toast } = useToast()
 
   // Initialize POS and user session
   useEffect(() => {
@@ -137,6 +140,25 @@ export default function Pos() {
           <span>₹{grandTotal.toFixed(2)}</span>
         </Button>
       </div>
+
+      {/* Mobile-only New Order Button */}
+      <Button
+        className="md:hidden fixed bottom-20 right-4 z-50 h-12 w-12 rounded-full shadow-lg bg-primary hover:bg-accent text-primary-foreground flex items-center justify-center p-0"
+        onClick={() => {
+          newOrder()
+          toast({
+            description: (
+              <div className="flex items-center gap-2">
+                <CircleCheck className="h-4 w-4 text-green-600" />
+                <span>A new order has been started.</span>
+              </div>
+            ),
+            duration: 1500,
+          })
+        }}
+      >
+        <Plus className="h-6 w-6" />
+      </Button>
 
       {/* Payment Dialog Modal */}
       <PaymentDialog
