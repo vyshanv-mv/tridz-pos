@@ -14,20 +14,25 @@ import { PaymentDialog } from "@/components/cart/PaymentDialog"
 import { useCartStore, selectActiveItems, selectGrandTotal } from "@/store/cartStore"
 import type { Customer } from "@/types/customer"
 import { useCheckout } from "@/hooks/useCheckout"
-import { AlertCircle, Plus, CircleCheck } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { AlertCircle, ShoppingBag } from "lucide-react"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 export default function Pos() {
   const { loadProfile, profile, loading: posLoading, error: posError } = usePosStore()
   const { fetchItems, fetchCategories, loading: itemsLoading, error: itemsError } = useItemsStore()
   const { initSession } = useUserStore()
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
   const activeItems = useCartStore(selectActiveItems)
   const grandTotal = useCartStore((state) => selectGrandTotal(state, profile))
 
   const { processPayment } = useCheckout()
-  const { newOrder } = useCartStore()
-  const { toast } = useToast()
+  // const { newOrder } = useCartStore() // Removed unused
+  // const { toast } = useToast() // Removed unused
 
   // Initialize POS and user session
   useEffect(() => {
@@ -59,7 +64,19 @@ export default function Pos() {
       }
     }
     loadData()
+    loadData()
   }, [profile, fetchItems, fetchCategories])
+
+  // Close sheet on desktop resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1280) {
+        setIsSheetOpen(false)
+      }
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   // Handle payment confirmation
   const handlePaymentConfirm = async (payments: any[], customer?: Customer) => {
@@ -95,7 +112,7 @@ export default function Pos() {
           <CategoryBar />
 
           {/* Items Grid Container */}
-          <div className="flex-1 overflow-y-auto bg-background pb-20 md:pb-4">
+          <div className="flex-1 overflow-y-auto bg-background pb-20 xl:pb-4">
             {/* Error Display */}
             {(posError || itemsError) && (
               <div className="mx-3 sm:mx-4 md:mx-6 mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-start gap-3">
@@ -123,13 +140,13 @@ export default function Pos() {
         </div>
 
         {/* Right Side: Cart Panel - Desktop Only */}
-        <aside className="hidden md:flex md:w-[380px] lg:w-[420px] xl:w-[450px] shrink-0 bg-card border-l shadow-sm">
+        <aside className="hidden xl:flex xl:w-[450px] shrink-0 bg-card border-l shadow-sm">
           <CartPanel />
         </aside>
       </div>
 
-      {/* Mobile-only Fixed Checkout Bar (< md) - Original Style */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t p-1 safe-area-bottom">
+      {/* Mobile-only Fixed Checkout Bar (< xl) - Original Style */}
+      <div className="xl:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t p-1 safe-area-bottom">
         <Button
           onClick={() => setIsPaymentOpen(true)}
           disabled={activeItems.length === 0}
@@ -141,24 +158,21 @@ export default function Pos() {
         </Button>
       </div>
 
-      {/* Mobile-only New Order Button */}
-      <Button
-        className="md:hidden fixed bottom-20 right-4 z-50 h-12 w-12 rounded-full shadow-lg bg-primary hover:bg-accent text-primary-foreground flex items-center justify-center p-0"
-        onClick={() => {
-          newOrder()
-          toast({
-            description: (
-              <div className="flex items-center gap-2">
-                <CircleCheck className="h-4 w-4 text-green-600" />
-                <span>A new order has been started.</span>
-              </div>
-            ),
-            duration: 1500,
-          })
-        }}
-      >
-        <Plus className="h-6 w-6" />
-      </Button>
+      {/* Mobile-only Cart/Order Drawer */}
+      <div className="xl:hidden fixed bottom-20 right-4 z-50">
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              className="h-12 w-12 rounded-full shadow-lg bg-primary hover:bg-accent text-primary-foreground flex items-center justify-center p-0"
+            >
+              <ShoppingBag className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="p-0 border-l w-[90%] sm:max-w-[420px]">
+            <CartPanel />
+          </SheetContent>
+        </Sheet>
+      </div>
 
       {/* Payment Dialog Modal */}
       <PaymentDialog
