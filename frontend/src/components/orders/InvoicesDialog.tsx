@@ -152,7 +152,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
                         <div className="h-full overflow-hidden flex flex-col">
                             {/* Inner Scrollable List */}
                             <div
-                                className="flex-1 min-h-0 overflow-y-auto"
+                                className="flex-1 min-h-0 overflow-y-auto scrollbar-thin"
                                 onScroll={handleScroll}
                             >
                                 {invoices.map((inv) => {
@@ -160,7 +160,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
                                     return (
                                         <div
                                             key={inv.name}
-                                            className="bg-card p-4 rounded-lg border border-transparent border-b-border hover:border-black cursor-pointer transition-all last:border-b-0"
+                                            className="bg-card p-4 mb-2 rounded-lg border border-transparent border-b-border hover:border-black cursor-pointer transition-all last:border-b-transparent"
                                             onClick={() => handleSelectInvoice(inv)}
                                         >
                                             <div className="flex items-start justify-between">

@@ -10,7 +10,7 @@ interface ReportsDialogProps {
 export function ReportsDialog({ open, onOpenChange }: ReportsDialogProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-full h-full overflow-y-auto">
+            <DialogContent className="max-w-full h-full overflow-y-auto scrollbar-thin">
                 <SalesReportsDashboard />
             </DialogContent>
         </Dialog>
