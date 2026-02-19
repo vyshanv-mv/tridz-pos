@@ -104,7 +104,7 @@ export default function Pos() {
   }
 
   // Error handling - POS Opening Entry
-  if (posError && (posError.includes("POS Opening Entry not found") || posError.includes("is outdated"))) {
+  if (posError && posError.includes("POS Opening Entry not found")) {
     return <OpeningEntryError error={posError} />
   }
 
