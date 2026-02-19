@@ -198,8 +198,8 @@ export function SalesReportsDashboard() {
         <div className="space-y-6 pt-2 pb-6 px-1">
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-slate-900">Sales Reports</h2>
-                    <p className="text-slate-500 mt-1">
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Sales Reports</h2>
+                    <p className="text-muted-foreground mt-1">
                         Overview of your sales performance
                     </p>
                 </div>
@@ -219,7 +219,7 @@ export function SalesReportsDashboard() {
                         <Card className="border shadow-sm">
                             <CardContent className="p-6">
                                 <p className="text-sm font-medium text-muted-foreground mb-2">Today's Sales</p>
-                                <div className="text-3xl font-bold text-slate-900">{formatCurrency(data.today.amount)}</div>
+                                <div className="text-3xl font-bold text-foreground">{formatCurrency(data.today.amount)}</div>
                                 <div className="flex items-center mt-2 text-xs font-medium text-emerald-600">
                                     <ArrowUpRight className="h-3 w-3 mr-1" />
                                     <span>{data.today.transactions} Transactions</span>
@@ -229,7 +229,7 @@ export function SalesReportsDashboard() {
                         <Card className="border shadow-sm">
                             <CardContent className="p-6">
                                 <p className="text-sm font-medium text-muted-foreground mb-2">This Week</p>
-                                <div className="text-3xl font-bold text-slate-900">{formatCurrency(data.week.amount)}</div>
+                                <div className="text-3xl font-bold text-foreground">{formatCurrency(data.week.amount)}</div>
                                 <div className="flex items-center mt-2 text-xs font-medium text-emerald-600">
                                     <ArrowUpRight className="h-3 w-3 mr-1" />
                                     <span>{data.week.transactions} Transactions</span>
@@ -239,7 +239,7 @@ export function SalesReportsDashboard() {
                         <Card className="border shadow-sm">
                             <CardContent className="p-6">
                                 <p className="text-sm font-medium text-muted-foreground mb-2">This Month</p>
-                                <div className="text-3xl font-bold text-slate-900">{formatCurrency(data.month.amount)}</div>
+                                <div className="text-3xl font-bold text-foreground">{formatCurrency(data.month.amount)}</div>
                                 <div className="flex items-center mt-2 text-xs font-medium text-emerald-600">
                                     <ArrowUpRight className="h-3 w-3 mr-1" />
                                     <span>{data.month.transactions} Transactions</span>
@@ -252,7 +252,7 @@ export function SalesReportsDashboard() {
                     <Card className="border shadow-sm">
                         <CardHeader className="pb-4">
                             <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                                <TrendingUp className="h-5 w-5 text-slate-500" />
+                                <TrendingUp className="h-5 w-5 text-muted-foreground" />
                                 Top 5 Items by Sales
                             </CardTitle>
                         </CardHeader>
@@ -262,20 +262,20 @@ export function SalesReportsDashboard() {
                                     <div key={item.item_code} className="space-y-2">
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-start gap-4">
-                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold text-sm shrink-0">
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-muted-foreground font-bold text-sm shrink-0">
                                                     {index + 1}
                                                 </div>
                                                 <div>
-                                                    <p className="font-semibold text-slate-900">{item.item_name}</p>
-                                                    <p className="text-sm text-slate-500">{formatCurrency(item.amount)} in sales</p>
+                                                    <p className="font-semibold text-foreground">{item.item_name}</p>
+                                                    <p className="text-sm text-muted-foreground">{formatCurrency(item.amount)} in sales</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <Package className="h-5 w-5 text-slate-300" />
+                                                <Package className="h-5 w-5 text-muted-foreground/40" />
                                             </div>
                                         </div>
                                         {/* Progress Bar */}
-                                        <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden ml-12" style={{ width: 'calc(100% - 3rem)' }}>
+                                        <div className="h-2 w-full rounded-full bg-muted overflow-hidden ml-12" style={{ width: 'calc(100% - 3rem)' }}>
                                             <div
                                                 className="h-full rounded-full bg-emerald-600 opacity-90"
                                                 style={{ width: `${item.percentage}%` }}
@@ -284,7 +284,7 @@ export function SalesReportsDashboard() {
                                     </div>
                                 ))}
                                 {data.topItems.length === 0 && (
-                                    <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+                                    <div className="text-center py-8 text-muted-foreground bg-muted/50 rounded-lg border border-dashed">
                                         No items sold yet this month
                                     </div>
                                 )}
@@ -300,21 +300,21 @@ export function SalesReportsDashboard() {
                                 <CardTitle className="text-base font-semibold">Quick Stats</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                                    <span className="text-slate-500">Average Transaction</span>
-                                    <span className="font-semibold text-slate-900">
+                                <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                                    <span className="text-muted-foreground">Average Transaction</span>
+                                    <span className="font-semibold text-foreground">
                                         {data.month.transactions > 0
                                             ? formatCurrency(data.month.amount / data.month.transactions)
                                             : formatCurrency(0)}
                                     </span>
                                 </div>
-                                <div className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                                    <span className="text-slate-500">Total Transactions</span>
-                                    <span className="font-semibold text-slate-900">{data.month.transactions}</span>
+                                <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                                    <span className="text-muted-foreground">Total Transactions</span>
+                                    <span className="font-semibold text-foreground">{data.month.transactions}</span>
                                 </div>
-                                <div className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                                    <span className="text-slate-500">Items Sold</span>
-                                    <span className="font-semibold text-slate-900">{data.totalItemsSold}</span>
+                                <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                                    <span className="text-muted-foreground">Items Sold</span>
+                                    <span className="font-semibold text-foreground">{data.totalItemsSold}</span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -326,14 +326,14 @@ export function SalesReportsDashboard() {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 {data.paymentMethods.map((method) => (
-                                    <div key={method.mode} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                                    <div key={method.mode} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                                         <div className="flex items-center gap-2">
                                             {/* Optional Icon for payment mode? */}
-                                            <span className="text-slate-500">{method.mode}</span>
+                                            <span className="text-muted-foreground">{method.mode}</span>
                                         </div>
                                         <div className="text-right">
-                                            <span className="font-semibold text-slate-900 block">{formatCurrency(method.amount)}</span>
-                                            <span className="text-xs text-slate-400">({method.percentage.toFixed(0)}%)</span>
+                                            <span className="font-semibold text-foreground block">{formatCurrency(method.amount)}</span>
+                                            <span className="text-xs text-muted-foreground">({method.percentage.toFixed(0)}%)</span>
                                         </div>
                                     </div>
                                 ))}
