@@ -52,6 +52,6 @@ export const useUserStore = create<UserState>((set) => ({
         // Clear local state first
         set({ currentUser: null, loading: false, error: null })
         // Call logout API which will redirect to login page
-        logout()
+        await logout()
     },
 }))

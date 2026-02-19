@@ -26,9 +26,15 @@ export async function login(username: string, password: string): Promise<void> {
     await auth.loginWithUsernamePassword({ username, password })
 }
 
-export function logout(): void {
-    // 1. Clear frontend-only state
-    sessionStorage.clear()
-    localStorage.clear()
-    window.location.href = "/pos"
+export async function logout(): Promise<void> {
+    try {
+        await auth.logout()
+    } catch (e) {
+        console.error("Logout failed", e)
+    } finally {
+        // 1. Clear frontend-only state
+        sessionStorage.clear()
+        localStorage.clear()
+        window.location.href = "/pos"
+    }
 }
