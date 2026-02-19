@@ -45,10 +45,7 @@ export default function Pos() {
   useEffect(() => {
     const initialize = async () => {
       try {
-        await Promise.all([
-          loadProfile(),
-          initSession()
-        ])
+        await loadProfile()
       } catch (error) {
         console.error("POS initialization failed:", error)
       }

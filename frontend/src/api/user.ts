@@ -22,9 +22,13 @@ export async function getUserDetails(userId: string): Promise<UserDetails> {
     return user
 }
 
+export async function login(username: string, password: string): Promise<void> {
+    await auth.loginWithUsernamePassword({ username, password })
+}
+
 export function logout(): void {
     // 1. Clear frontend-only state
     sessionStorage.clear()
     localStorage.clear()
-    window.location.href = "/logout"
+    window.location.href = "/pos"
 }
