@@ -25,7 +25,7 @@ export function InvoiceDetailView({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl w-[95%] max-h-[90vh] p-0 gap-0 bg-white rounded-lg shadow-lg flex flex-col overflow-hidden">
+            <DialogContent className="max-w-3xl w-[95%] max-h-[90vh] p-0 gap-0 bg-card rounded-lg shadow-lg flex flex-col overflow-hidden">
                 {loadingDetails ? (
                     <div className="flex-1 flex items-center justify-center p-8">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -105,10 +105,10 @@ export function InvoiceDetailView({
                             </div>
 
                             {/* Scrollable Items Section */}
-                            <div className="flex-1 overflow-y-auto px-6">
-                                <div className="border border-border rounded-lg p-4 space-y-4">
+                            <div className="flex-1 overflow-y-auto px-2 py-2 sm:px-4">
+                                <div className="space-y-4">
                                     {selectedInvoiceInfo.items?.map((item: any, index: number) => (
-                                        <div key={item.name || index} className="flex items-start justify-between">
+                                        <div key={item.name || index} className="bg-card p-4 rounded-lg border border-transparent border-b-border hover:border-black transition-all last:border-b-0 flex items-start justify-between">
                                             <div className="flex-1">
                                                 <p className="text-sm font-medium text-foreground">{item.item_name || item.item_code}</p>
                                                 <p className="text-xs text-muted-foreground mt-0.5">{item.item_code}</p>
