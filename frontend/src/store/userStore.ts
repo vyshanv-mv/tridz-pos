@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { getLoggedUser, getUserDetails, logout, type UserDetails } from "@/api/user"
+import { getLoggedUser, getUserDetails, login, logout, type UserDetails } from "@/api/user"
 
 interface UserState {
     currentUser: UserDetails | null
@@ -7,6 +7,7 @@ interface UserState {
     error: string | null
 
     initSession: () => Promise<void>
+    login: (username: string, password: string) => Promise<void>
     logout: () => Promise<void>
 }
 
@@ -22,8 +23,7 @@ export const useUserStore = create<UserState>((set) => ({
 
             // Check for valid user and ensure it's not the guest user
             if (!userId || userId === "Guest") {
-                // Redirect to Frappe login page
-                window.location.href = "/login"
+                set({ currentUser: null, loading: false })
                 return
             }
 
@@ -31,8 +31,20 @@ export const useUserStore = create<UserState>((set) => ({
             set({ currentUser: userDetails, loading: false })
         } catch (e: any) {
             console.error("Failed to init user session:", e)
-            // If authentication fails, redirect to login
-            window.location.href = "/login"
+            set({ currentUser: null, loading: false })
+        }
+    },
+
+    login: async (username, password) => {
+        try {
+            set({ loading: true, error: null })
+            await login(username, password)
+            const userId = await getLoggedUser()
+            const userDetails = await getUserDetails(userId)
+            set({ currentUser: userDetails, loading: false })
+        } catch (e: any) {
+            set({ loading: false, error: e.message || "Login failed" })
+            throw e
         }
     },
 
@@ -40,6 +52,6 @@ export const useUserStore = create<UserState>((set) => ({
         // Clear local state first
         set({ currentUser: null, loading: false, error: null })
         // Call logout API which will redirect to login page
-        await logout()
+        logout()
     },
 }))
