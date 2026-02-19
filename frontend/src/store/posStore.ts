@@ -5,7 +5,6 @@ import { getPOSProfile, getOpeningEntry, getTaxTemplate } from "@/api/pos"
 interface PosState {
   profile: POSProfile | null
   openingEntry: POSOpeningEntry | null
-  outdatedEntry: POSOpeningEntry | null
   loading: boolean
   error: string | null
   showItemImages: boolean
@@ -17,7 +16,6 @@ interface PosState {
 export const usePosStore = create<PosState>((set) => ({
   profile: null,
   openingEntry: null,
-  outdatedEntry: null,
   loading: false,
   error: null,
   showItemImages: localStorage.getItem('showItemImages') !== 'false', // Default to true
@@ -32,13 +30,6 @@ export const usePosStore = create<PosState>((set) => ({
       if (!opening) {
         sessionStorage.clear()
         throw new Error("POS Opening Entry not found. Please create a POS Opening Entry first.")
-      }
-
-      // Check if the opening entry is outdated (not from today)
-      const today = new Date().toISOString().split('T')[0]
-      if (opening.period_start_date !== today) {
-        set({ outdatedEntry: opening as POSOpeningEntry, loading: false })
-        throw new Error("POS Opening Entry is outdated. Please close the POS and create a new POS Opening Entry.")
       }
 
       // Fetch taxes if available

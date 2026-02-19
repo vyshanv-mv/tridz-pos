@@ -8,8 +8,6 @@ export function OpeningEntryError({ error }: { error: string }) {
     }
 
 
-    const isOutdated = error.includes("is outdated")
-
     return (
         <div className="h-screen w-full flex flex-col items-center justify-center bg-background p-6 text-center">
 
@@ -19,7 +17,7 @@ export function OpeningEntryError({ error }: { error: string }) {
                 </div>
 
                 <h1 className="text-2xl font-bold text-foreground mb-2">
-                    {isOutdated ? "Opening Entry Outdated" : "Opening Entry Required"}
+                    Opening Entry Required
                 </h1>
 
                 <p className="text-muted-foreground mb-8 leading-relaxed">
@@ -27,25 +25,13 @@ export function OpeningEntryError({ error }: { error: string }) {
                 </p>
 
                 <div className="space-y-3">
-                    {isOutdated ? (
-                        <Button
-                            onClick={() => {
-                                window.location.href = "/app/pos-closing-entry/new"
-                            }}
-                            className="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-xl gap-2 transition-all shadow-md active:scale-95"
-                        >
-                            <RefreshCw className="h-4 w-4" />
-                            Go to POS Closing Entry
-                        </Button>
-                    ) : (
-                        <Button
-                            onClick={handleRedirect}
-                            className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-xl gap-2 transition-all"
-                        >
-                            Create Opening Entry
-                            <ArrowRight className="h-4 w-4" />
-                        </Button>
-                    )}
+                    <Button
+                        onClick={handleRedirect}
+                        className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-xl gap-2 transition-all"
+                    >
+                        Create Opening Entry
+                        <ArrowRight className="h-4 w-4" />
+                    </Button>
 
                     <Button
                         variant="outline"
