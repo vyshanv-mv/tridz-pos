@@ -21,12 +21,19 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
+import { LastInvoiceDialog } from "@/components/orders/LastInvoiceDialog"
+import { formatCurrency } from "@/lib/utils"
+
 export default function Pos() {
   const { loadProfile, profile, loading: posLoading, error: posError } = usePosStore()
   const { fetchItems, fetchCategories, loading: itemsLoading, error: itemsError } = useItemsStore()
   const { initSession } = useUserStore()
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  // Last Invoice Dialog State
+  const [lastInvoice, setLastInvoice] = useState<any>(null)
+  const [showLastInvoiceDialog, setShowLastInvoiceDialog] = useState(false)
+
   const activeItems = useCartStore(selectActiveItems)
   const grandTotal = useCartStore((state) => selectGrandTotal(state, profile))
 
@@ -78,11 +85,21 @@ export default function Pos() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // Handle payment confirmation
-  const handlePaymentConfirm = async (payments: any[], customer?: Customer) => {
-    const success = await processPayment(payments, customer)
-    if (success) {
+  // Common handler for successful payment
+  const handlePaymentSuccess = (invoice: any) => {
+    setLastInvoice(invoice)
+    // Small timeout to ensure dialog state updates cleanly
+    setTimeout(() => {
+      setShowLastInvoiceDialog(true)
+    }, 100)
+  }
+
+  // Handle mobile payment confirmation
+  const handleMobilePaymentConfirm = async (payments: any[], customer?: Customer) => {
+    const invoice = await processPayment(payments, customer)
+    if (invoice) {
       setIsPaymentOpen(false)
+      handlePaymentSuccess(invoice)
     }
   }
 
@@ -141,7 +158,7 @@ export default function Pos() {
 
         {/* Right Side: Cart Panel - Desktop Only */}
         <aside className="hidden xl:flex xl:w-[450px] shrink-0 bg-card border-l shadow-sm">
-          <CartPanel />
+          <CartPanel onPaymentSuccess={handlePaymentSuccess} />
         </aside>
       </div>
 
@@ -169,7 +186,7 @@ export default function Pos() {
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="p-0 border-l w-[90%] sm:max-w-[420px]">
-            <CartPanel />
+            <CartPanel onPaymentSuccess={handlePaymentSuccess} />
           </SheetContent>
         </Sheet>
       </div>
@@ -179,7 +196,15 @@ export default function Pos() {
         open={isPaymentOpen}
         onOpenChange={setIsPaymentOpen}
         total={grandTotal}
-        onConfirm={handlePaymentConfirm}
+        onConfirm={handleMobilePaymentConfirm}
+      />
+
+      {/* Last Invoice Dialog */}
+      <LastInvoiceDialog
+        open={showLastInvoiceDialog}
+        onOpenChange={setShowLastInvoiceDialog}
+        invoice={lastInvoice}
+        formatCurrency={formatCurrency}
       />
     </div>
   )

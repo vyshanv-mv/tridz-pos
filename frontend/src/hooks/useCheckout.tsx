@@ -25,7 +25,7 @@ export function useCheckout() {
                 description: "Session lost or invalid state",
                 variant: "destructive",
             })
-            return false
+            return null
         }
 
         setIsProcessing(true)
@@ -89,7 +89,7 @@ export function useCheckout() {
                 closeOrder(activeOrderId)
             }
 
-            return true
+            return invoice
 
         } catch (error: any) {
             console.error("Checkout failed:", error)
@@ -98,7 +98,7 @@ export function useCheckout() {
                 description: error.message || "Failed to process order",
                 variant: "destructive",
             })
-            return false
+            return null
         } finally {
             setIsProcessing(false)
         }

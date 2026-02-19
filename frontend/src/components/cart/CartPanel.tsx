@@ -22,7 +22,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-export function CartPanel() {
+interface CartPanelProps {
+  onPaymentSuccess?: (invoice: any) => void
+}
+
+export function CartPanel({ onPaymentSuccess }: CartPanelProps) {
   const { addItem, removeItem, reduceItem } = useCartStore()
   const { profile } = usePosStore()
   const items = useCartStore(selectActiveItems)
@@ -58,9 +62,10 @@ export function CartPanel() {
   }
 
   const handlePaymentConfirm = async (payments: any[], customer?: Customer) => {
-    const success = await processPayment(payments, customer)
-    if (success) {
+    const invoice = await processPayment(payments, customer)
+    if (invoice) {
       setIsPaymentOpen(false)
+      onPaymentSuccess?.(invoice)
     }
   }
 
