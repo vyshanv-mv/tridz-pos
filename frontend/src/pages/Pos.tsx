@@ -163,9 +163,9 @@ export default function Pos() {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button
-              className="h-12 w-12 rounded-full shadow-lg bg-primary hover:bg-accent text-primary-foreground flex items-center justify-center p-0"
+              className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-accent text-primary-foreground flex items-center justify-center p-0"
             >
-              <ShoppingBag className="h-6 w-6" />
+              <ShoppingBag className="h-8 w-8" />
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="p-0 border-l w-[90%] sm:max-w-[420px]">

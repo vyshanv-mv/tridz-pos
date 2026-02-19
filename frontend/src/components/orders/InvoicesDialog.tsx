@@ -125,7 +125,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-xl md:max-w-3xl w-[calc(100%-2rem)] p-4 sm:p-0 gap-0 bg-card h-[85vh] max-h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+            <DialogContent className="max-w-xl md:max-w-3xl w-[calc(100%-2rem)] p-0 gap-0 bg-card h-[85vh] max-h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
                 <div className="px-2 py-4 sm:p-4 bg-card shrink-0 border-b border-border space-y-4">
                     <div>
                         <h2 className="text-lg font-bold">Invoices</h2>
@@ -149,10 +149,10 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
                             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                         </div>
                     ) : (
-                        <div className="h-full border border-border rounded-lg overflow-hidden flex flex-col">
+                        <div className="h-full overflow-hidden flex flex-col">
                             {/* Inner Scrollable List */}
                             <div
-                                className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-2 space-y-3"
+                                className="flex-1 min-h-0 overflow-y-auto"
                                 onScroll={handleScroll}
                             >
                                 {invoices.map((inv) => {
@@ -160,7 +160,7 @@ export function InvoicesDialog({ open, onOpenChange }: InvoicesDialogProps) {
                                     return (
                                         <div
                                             key={inv.name}
-                                            className="bg-card p-3 rounded-lg border border-border hover:border-foreground cursor-pointer transition-all"
+                                            className="bg-card p-4 rounded-lg border border-transparent border-b-border hover:border-black cursor-pointer transition-all last:border-b-0"
                                             onClick={() => handleSelectInvoice(inv)}
                                         >
                                             <div className="flex items-start justify-between">

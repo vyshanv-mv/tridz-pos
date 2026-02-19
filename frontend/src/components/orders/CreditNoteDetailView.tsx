@@ -44,7 +44,7 @@ export function CreditNoteDetailView({
 }: CreditNoteDetailViewProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-3xl w-[calc(100%-2rem)] h-[90vh] sm:h-[90vh] sm:max-h-[90vh] p-4 sm:p-0 gap-0 bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] flex flex-col">
+            <DialogContent className="max-w-3xl w-[calc(100%-2rem)] h-[90vh] sm:h-[90vh] sm:max-h-[90vh] p-0 gap-0 bg-card rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] flex flex-col">
                 {loadingDetails ? (
                     <div className="flex-1 flex items-center justify-center p-8">
                         <Loader2 className="h-8 w-8 animate-spin text-emerald-800" />
@@ -86,7 +86,7 @@ export function CreditNoteDetailView({
 
 
                         {/* Scrollable Items Section */}
-                        <div className="flex-1 px-2 py-3 sm:px-4 flex flex-col overflow-hidden">
+                        <div className="flex-1 px-2 py-2 sm:px-4 flex flex-col overflow-hidden">
                             {/* Select Items Section Header */}
                             <div className="flex items-center justify-between mb-3 shrink-0">
                                 <h4 className="text-sm lg:text-base font-semibold text-foreground">Select Items for Credit Note</h4>
@@ -107,7 +107,7 @@ export function CreditNoteDetailView({
                             </div>
 
                             {/* Items List - Only this scrolls */}
-                            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 border border-border p-2 rounded-lg">
+                            <div className="flex-1 overflow-y-auto no-scrollbar">
                                 {selectedInvoiceInfo.items?.map((item: any) => {
                                     const itemState = selectedItems[item.name]
                                     if (!itemState) return null
@@ -115,9 +115,11 @@ export function CreditNoteDetailView({
                                     return (
                                         <div
                                             key={item.name}
-                                            className={`rounded-lg p-2.5 border transition-all ${itemState.selected
-                                                ? 'bg-secondary/25 border-primary hover:border-foreground'
-                                                : 'bg-card border-border hover:border-foreground'
+                                            className={`rounded-lg p-4 border transition-all ${itemState.selected
+                                                // If selected, keep primary border but maybe allow hover black? Let's follow user "border black on hover".
+                                                ? 'bg-secondary/25 border-primary hover:border-black'
+                                                // Non-selected: transparent border, bottom border, hover black
+                                                : 'bg-card border-transparent border-b-border hover:border-black last:border-b-0'
                                                 }`}
                                         >
                                             <div className="flex items-start gap-3">
