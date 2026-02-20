@@ -75,20 +75,7 @@ export const useCartStore = create<CartState>()(
             const idx = items.findIndex(i => i.item_code === itemCode)
 
             if (idx > -1) {
-              // Allow negative quantity for returns? 
-              // Usually returns work by adding item with negative qty.
-              // If we reduce, we subtract 1.
-              // If we start with negative qty (from loadOrder), reducing makes it MORE negative (e.g. -1 -> -2).
-              // Let's assume standard logic:
-              // If qty > 1, decrement.
-              // If qty = 1, remove.
-              // If qty < 0 (return), maybe we want to "increase" it towards 0 (removes item from return list) or make it more negative?
-              // Standard POS return behavior: You load "Sold Item x 2". You want to return 1. You change qty to -1.
-              // Here we are loading with negative qty. So "Item x -2".
-              // If I want to return only 1, I should change qty to -1.
-              // So "reduceItem" in a return context means "return LESS"? Or "return MORE"?
-              // Let's keep specific logic simple: reduceItem reduces the number (value - 1).
-              // -1 -> -2 (Returning 2 items).
+
               items[idx] = { ...items[idx], qty: items[idx].qty - 1 }
             }
             return { ...order, items }
@@ -210,7 +197,43 @@ export const selectTax = (state: CartState, profile: any) => {
     // Add other charge types if needed (Actual, etc.)
   })
 
+
+
   return totalTax
+}
+
+export const calculateTaxBreakdown = (subtotal: number, profile: any) => {
+  if (!profile?.taxes || profile.taxes.length === 0) return []
+
+  let netTotal = subtotal
+
+  // Handle inclusive taxes first to find the true net total
+  const inclusiveTaxes = profile.taxes.filter((t: any) => t.included_in_print_rate)
+  if (inclusiveTaxes.length > 0) {
+    const totalInclusiveRate = inclusiveTaxes.reduce((sum: number, t: any) => sum + (t.rate || 0), 0)
+    netTotal = subtotal / (1 + totalInclusiveRate / 100)
+  }
+
+  const breakdown: { title: string, rate: number, amount: number }[] = []
+
+  // Calculate actual tax amounts
+  profile.taxes.forEach((tax: any) => {
+    let amount = 0
+    if (tax.charge_type === "On Net Total") {
+      amount = netTotal * (tax.rate / 100)
+    }
+    // Add other charge types if needed
+
+    if (amount > 0) {
+      breakdown.push({
+        title: tax.description || tax.account_head || "Tax",
+        rate: tax.rate,
+        amount: amount
+      })
+    }
+  })
+
+  return breakdown
 }
 
 export const selectGrandTotal = (state: CartState, profile: any) => {

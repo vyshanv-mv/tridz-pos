@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 import { TopBar } from "@/components/layout/TopBar"
 import { CategoryBar } from "@/components/layout/CategoryBar"
@@ -11,7 +11,7 @@ import { OpeningEntryError } from "@/components/layout/OpeningEntryError"
 import { NoPosProfileError } from "@/components/layout/NoPosProfileError"
 import { Button } from "@/components/ui/button"
 import { PaymentDialog } from "@/components/cart/PaymentDialog"
-import { useCartStore, selectActiveItems, selectGrandTotal } from "@/store/cartStore"
+import { useCartStore, selectActiveItems, selectGrandTotal, selectSubtotal, calculateTaxBreakdown } from "@/store/cartStore"
 import type { Customer } from "@/types/customer"
 import { useCheckout } from "@/hooks/useCheckout"
 import { AlertCircle, ShoppingBag } from "lucide-react"
@@ -36,6 +36,8 @@ export default function Pos() {
 
   const activeItems = useCartStore(selectActiveItems)
   const grandTotal = useCartStore((state) => selectGrandTotal(state, profile))
+  const subtotal = useCartStore(selectSubtotal)
+  const taxBreakdown = useMemo(() => calculateTaxBreakdown(subtotal, profile), [subtotal, profile])
 
   const { processPayment } = useCheckout()
   // const { newOrder } = useCartStore() // Removed unused
@@ -193,6 +195,8 @@ export default function Pos() {
         open={isPaymentOpen}
         onOpenChange={setIsPaymentOpen}
         total={grandTotal}
+        subtotal={subtotal}
+        taxBreakdown={taxBreakdown}
         onConfirm={handleMobilePaymentConfirm}
       />
 
