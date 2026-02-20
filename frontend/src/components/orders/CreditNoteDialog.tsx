@@ -105,8 +105,8 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
         setLoadingDetails(true)
         try {
             const data = await getInvoice(invoice.name)
-            const hasReturn = await checkIfInvoiceHasReturn(invoice.name)
-            setSelectedInvoiceInfo({ ...data, hasReturn })
+            const returnName = await checkIfInvoiceHasReturn(invoice.name)
+            setSelectedInvoiceInfo({ ...data, returnName })
         } catch (error) {
             console.error("Failed to load invoice details", error)
         } finally {
@@ -160,21 +160,47 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
         return Object.keys(selectedItems).length
     }
 
-    const getTotalCreditAmount = () => {
-        if (!selectedInvoiceInfo?.items) return 0
-        return selectedInvoiceInfo.items.reduce((total: number, item: any) => {
+    const getEstimatedCreditAmount = () => {
+        if (!selectedInvoiceInfo || !selectedInvoiceInfo.items) return { subtotal: 0, tax: 0, grandTotal: 0 }
+
+        // Calculate total basis amount of original invoice (sum of rate * qty)
+        const totalBasis = selectedInvoiceInfo.items.reduce((sum: number, item: any) => {
+            return sum + (Math.abs(item.qty) * item.rate)
+        }, 0)
+
+        // Calculate basis amount of selected return items
+        const selectedBasis = selectedInvoiceInfo.items.reduce((sum: number, item: any) => {
             const itemState = selectedItems[item.name]
             if (itemState?.selected) {
-                return total + (item.rate * itemState.qty)
+                return sum + (itemState.qty * item.rate)
             }
-            return total
+            return sum
         }, 0)
+
+        if (totalBasis === 0) return { subtotal: 0, tax: 0, grandTotal: 0 }
+
+        const ratio = selectedBasis / totalBasis
+
+        // Original Totals (use net_total if available, or derive)
+        // net_total is usually the sum of item amounts (subtotal)
+        // total_taxes_and_charges is the tax amount
+        const originalSubtotal = selectedInvoiceInfo.net_total || selectedInvoiceInfo.total || 0
+        const originalTax = selectedInvoiceInfo.total_taxes_and_charges || 0
+        const originalGrandTotal = selectedInvoiceInfo.grand_total || 0
+
+        return {
+            subtotal: ratio * originalSubtotal,
+            tax: ratio * originalTax,
+            grandTotal: ratio * originalGrandTotal
+        }
     }
+
+
 
     const handleIssueCreditNote = async () => {
         if (!selectedInvoiceInfo) return
 
-        if (selectedInvoiceInfo.hasReturn) {
+        if (selectedInvoiceInfo.returnName) {
             toast({
                 description: "This invoice has already been returned.",
                 variant: "destructive"
@@ -205,12 +231,6 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
                 return
             }
 
-            // Calculate total refund amount
-            const totalRefund = selectedItemsList.reduce((total: number, item: any) => {
-                const itemState = selectedItems[item.name]
-                return total + (item.rate * itemState.qty)
-            }, 0)
-
             // Prepare items with negative quantities for return
             const returnItems = selectedItemsList.map((item: any) => ({
                 item_code: item.item_code,
@@ -220,13 +240,7 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
                 pos_invoice_item: item.name // Link to original invoice item
             }))
 
-            // Create payment for refund (negative amount)
-            const refundPayment = {
-                mode_of_payment: "Cash", // Default to cash refund
-                amount: -1 * totalRefund // Negative amount for refund
-            }
-
-            // Create the credit note (return invoice)
+            // ERPNext will calculate the totals for the return
             const creditNote = await createDraftPOSInvoice({
                 customer: selectedInvoiceInfo.customer,
                 company: profile.company,
@@ -235,15 +249,23 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
                 currency: profile.currency,
                 warehouse: profile.warehouse,
                 items: returnItems as any,
-                payments: [refundPayment],
-                return_against: selectedInvoiceInfo.name // Link to original invoice
+                // Send dummy payment to satisfy ERPNext validation for POS Invoice
+                payments: [{ mode_of_payment: "Cash", amount: 0 }],
+                taxes: selectedInvoiceInfo.taxes,
+                taxes_and_charges: selectedInvoiceInfo.taxes_and_charges,
+                return_against: selectedInvoiceInfo.name, // Link to original invoice
             })
 
             if (creditNote?.name) {
+                // Formatting the currency check if possible, or just raw number
+                const response = creditNote as any
+                const refundAmount = response.grand_total ? Math.abs(response.grand_total) : 0
+
                 toast({
                     title: "Success",
-                    description: `Credit Note ${creditNote.name} created successfully!`,
+                    description: `Credit Note ${creditNote.name} created. Refund Amount: ${formatCurrency(refundAmount)}`,
                 })
+
                 onOpenChange(false)
                 // Optionally refresh the invoice list
                 loadInvoices(1, debouncedSearch)
@@ -274,7 +296,7 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
                 onIssueCreditNote={handleIssueCreditNote}
                 getSelectedItemsCount={getSelectedItemsCount}
                 getTotalItems={getTotalItems}
-                getTotalCreditAmount={getTotalCreditAmount}
+                getEstimatedCreditAmount={getEstimatedCreditAmount}
             />
         )
     }
