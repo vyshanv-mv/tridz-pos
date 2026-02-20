@@ -16,7 +16,39 @@ export async function createDraftPOSInvoice(data: {
     return_against?: string
     grand_total?: number
 }) {
-    // Calculate totals - ERPNext will recalculate, but we send our calculated values to be sure
+    // If it's a return, we skip frontend calculations entirely and let ERPNext handle it
+    if (data.return_against) {
+        const payload = {
+            doctype: DOCTYPES.POS_INVOICE,
+            is_pos: 1,
+            customer: data.customer,
+            company: data.company,
+            pos_profile: data.pos_profile,
+            pos_opening_entry: data.pos_opening_entry,
+            currency: data.currency,
+            update_stock: 1,
+            warehouse: data.warehouse,
+            is_return: 1,
+            return_against: data.return_against,
+
+            items: data.items.map(i => ({
+                item_code: i.item_code,
+                qty: i.qty,
+                rate: i.rate,
+                warehouse: data.warehouse,
+                ...(i.pos_invoice_item && { pos_invoice_item: i.pos_invoice_item }),
+            })),
+
+            taxes_and_charges: data.taxes_and_charges,
+            taxes: data.taxes,
+
+            payments: data.payments,
+            paid_amount: data.payments.reduce((sum, p) => sum + p.amount, 0),
+        }
+        return await db.createDoc(DOCTYPES.POS_INVOICE, payload)
+    }
+
+    // ERPNext will recalculate, but we send our calculated values to be sure
     const round = (val: number) => Math.round(val * 100) / 100
     const subtotal = round(data.items.reduce((sum, item) => sum + (item.qty * item.rate), 0))
 

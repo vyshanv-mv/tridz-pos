@@ -23,7 +23,8 @@ interface CreditNoteDetailViewProps {
     onIssueCreditNote: () => void
     getSelectedItemsCount: () => number
     getTotalItems: () => number
-    getTotalCreditAmount: () => number
+    getEstimatedCreditAmount: () => { subtotal: number, tax: number, grandTotal: number }
+    onViewCreditNote: () => void
 }
 
 export function CreditNoteDetailView({
@@ -40,7 +41,8 @@ export function CreditNoteDetailView({
     onIssueCreditNote,
     getSelectedItemsCount,
     getTotalItems,
-    getTotalCreditAmount
+    getEstimatedCreditAmount,
+    onViewCreditNote
 }: CreditNoteDetailViewProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -54,8 +56,9 @@ export function CreditNoteDetailView({
                         {/* Header - Fixed */}
                         <div className="px-4 py-4 shrink-0 flex items-start justify-between border-b border-border">
                             <div>
-                                <h2 className="text-xl font-semibold text-foreground">Issue Credit Note</h2>
-                                <p className="text-sm text-muted-foreground mt-1">Select items and quantities for credit note</p>
+                                <h2 className="text-xl font-bold">New Credit Note</h2>
+                                <p className="text-sm text-muted-foreground">Select items to return from Invoice {selectedInvoiceInfo.name}</p>
+
                             </div>
                         </div>
 
@@ -183,11 +186,21 @@ export function CreditNoteDetailView({
                                                     {getSelectedItemsCount()} of {getTotalItems()}
                                                 </span>
                                             </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm text-muted-foreground">Credit amount:</span>
-                                                <span className="text-lg font-bold text-foreground">
-                                                    {formatCurrency(getTotalCreditAmount())}
-                                                </span>
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between items-center text-sm">
+                                                    <span className="text-muted-foreground">Subtotal:</span>
+                                                    <span className="font-medium">{formatCurrency(getEstimatedCreditAmount().subtotal)}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center text-sm">
+                                                    <span className="text-muted-foreground">Tax:</span>
+                                                    <span className="font-medium">{formatCurrency(getEstimatedCreditAmount().tax)}</span>
+                                                </div>
+                                                <div className="border-t border-border mt-2 pt-2 flex justify-between items-center">
+                                                    <span className="text-base font-bold text-foreground">Total Refund:</span>
+                                                    <span className="text-lg font-bold text-emerald-600">
+                                                        {formatCurrency(getEstimatedCreditAmount().grandTotal)}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -196,20 +209,33 @@ export function CreditNoteDetailView({
                         </div>
 
                         {/* Footer Buttons - Fixed */}
-                        <div className="px-4 py-4 border-t border-border flex gap-3 shrink-0">
-                            <button
-                                onClick={onBack}
-                                className="flex-1 px-4 py-2.5 bg-background border border-input rounded-md text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                            >
-                                Back
-                            </button>
-                            <button
-                                onClick={onIssueCreditNote}
-                                disabled={!!selectedInvoiceInfo.hasReturn || getSelectedItemsCount() === 0}
-                                className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
-                            >
-                                Issue Credit Note
-                            </button>
+                        <div className="px-4 py-4 border-t border-border shrink-0">
+                            {selectedInvoiceInfo.returnName && (
+                                <div className="mb-3 p-3 bg-yellow-100 text-yellow-800 rounded text-sm font-semibold border border-yellow-200 flex items-center justify-between gap-2">
+                                    <span className="flex items-center gap-2">⚠️ Credit Note already issued: {selectedInvoiceInfo.returnName}</span>
+                                    <button
+                                        onClick={onViewCreditNote}
+                                        className="px-3 py-1 bg-yellow-200 hover:bg-yellow-300 text-yellow-900 rounded text-xs border border-yellow-300 transition-colors"
+                                    >
+                                        View
+                                    </button>
+                                </div>
+                            )}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={onBack}
+                                    className="flex-1 px-4 py-2.5 bg-background border border-input rounded-md text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                                >
+                                    Back
+                                </button>
+                                <button
+                                    onClick={onIssueCreditNote}
+                                    disabled={!!selectedInvoiceInfo.returnName || getSelectedItemsCount() === 0}
+                                    className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Issue Credit Note
+                                </button>
+                            </div>
                         </div>
                     </>
                 )}
