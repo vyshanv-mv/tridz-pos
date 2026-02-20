@@ -52,6 +52,9 @@ export function LastInvoiceDialog({ open, onOpenChange, invoice, formatCurrency 
                         <div className="sm:col-span-2 border-t border-border/50 pt-3 mt-1">
                             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Customer</p>
                             <p className="text-base font-medium text-foreground">{invoice.customer}</p>
+                            {invoice.contact_mobile && (
+                                <p className="text-sm text-muted-foreground">{invoice.contact_mobile}</p>
+                            )}
                         </div>
                     </div>
 

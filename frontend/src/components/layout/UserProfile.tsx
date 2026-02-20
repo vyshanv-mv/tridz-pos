@@ -13,12 +13,35 @@ import { CreditNoteDialog } from "@/components/orders/CreditNoteDialog"
 import { InvoicesDialog } from "@/components/orders/InvoicesDialog"
 
 import { ReportsDialog } from "@/components/reports/ReportsDialog"
+import { LastInvoiceDialog } from "@/components/orders/LastInvoiceDialog"
+import { getAllInvoices, getInvoice } from "@/api/invoice"
+import { formatCurrency } from "@/lib/utils"
+import { FileSearch } from "lucide-react"
 
 export function UserProfile() {
     const { currentUser, logout } = useUserStore()
     const [showCreditNote, setShowCreditNote] = useState(false)
     const [showInvoices, setShowInvoices] = useState(false)
     const [showReports, setShowReports] = useState(false)
+    const [showLastInvoice, setShowLastInvoice] = useState(false)
+    const [lastInvoice, setLastInvoice] = useState<any>(null)
+
+    const handleLastInvoiceClick = async () => {
+        try {
+            // Fetch the most recent invoice (page 1, limit 1)
+            const result = await getAllInvoices(1, 1)
+            if (result.invoices && result.invoices.length > 0) {
+                // Fetch full details including items
+                const fullInvoice = await getInvoice(result.invoices[0].name)
+                setLastInvoice(fullInvoice)
+                setShowLastInvoice(true)
+            } else {
+                alert("No invoices found")
+            }
+        } catch (error) {
+            console.error("Failed to fetch last invoice", error)
+        }
+    }
 
     // Fallback for user name if not loaded or available
     const userName = currentUser?.full_name || currentUser?.name || "Guest User"
@@ -58,6 +81,13 @@ export function UserProfile() {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         className="cursor-pointer"
+                        onClick={handleLastInvoiceClick}
+                    >
+                        <FileSearch className="mr-2 h-4 w-4" />
+                        <span>Last Invoice</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        className="cursor-pointer"
                         onClick={() => setShowCreditNote(true)}
                     >
                         <Receipt className="mr-2 h-4 w-4" />
@@ -84,6 +114,13 @@ export function UserProfile() {
             <ReportsDialog
                 open={showReports}
                 onOpenChange={setShowReports}
+            />
+
+            <LastInvoiceDialog
+                open={showLastInvoice}
+                onOpenChange={setShowLastInvoice}
+                invoice={lastInvoice}
+                formatCurrency={formatCurrency}
             />
         </>
     )
