@@ -71,10 +71,14 @@ export function CreditNoteInvoiceList({
                                             )}
                                         </div>
                                         <div className="text-right flex flex-col items-end gap-1">
-
                                             <span className="block font-bold text-emerald-500 text-base">
                                                 {formatCurrency(inv.grand_total)}
                                             </span>
+                                            {inv.total_taxes_and_charges > 0 && (
+                                                <span className="text-xs text-muted-foreground">
+                                                    Tax: {formatCurrency(inv.total_taxes_and_charges)}
+                                                </span>
+                                            )}
                                             <span className="text-sm font-bold text-emerald-500 uppercase tracking-wider px-1.5 py-0.5 rounded w-fit">
                                                 {inv.status}
                                             </span>

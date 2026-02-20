@@ -22,6 +22,8 @@ interface PaymentDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     total: number
+    subtotal: number
+    taxBreakdown: { title: string, rate: number, amount: number }[]
     onConfirm: (payments: Payment[], customer?: Customer) => Promise<void>
 }
 
@@ -29,6 +31,8 @@ export function PaymentDialog({
     open,
     onOpenChange,
     total,
+    subtotal,
+    taxBreakdown,
     onConfirm,
 }: PaymentDialogProps) {
     const { profile } = usePosStore()
@@ -96,7 +100,7 @@ export function PaymentDialog({
                         <div className="flex items-center gap-2">
                             <DialogTitle className="text-xl">Checkout</DialogTitle>
                             {activeOrder?.return_against && (
-                                <span className="px-2 py-0.5 text-xs font-bold bg-red-100 text-red-600 rounded-md uppercase">
+                                <span className="px-2 py-0.5 text-xs font-bold bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300 rounded-md uppercase">
                                     Return
                                 </span>
                             )}
@@ -117,10 +121,22 @@ export function PaymentDialog({
                         onSelect={setSelectedMode}
                     />
 
-                    {/* Grand Total */}
-                    <div className="bg-muted/20 p-4 rounded-lg flex justify-between items-center mb-6">
-                        <span className="text-muted-foreground">Grand Total:</span>
-                        <span className="font-bold text-lg">₹{total.toFixed(2)}</span>
+                    {/* Totals Breakdown */}
+                    <div className="bg-muted/20 p-4 rounded-lg space-y-2 mb-6">
+                        <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Subtotal:</span>
+                            <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                        </div>
+                        {taxBreakdown.map((tax, index) => (
+                            <div key={index} className="flex justify-between items-center text-sm">
+                                <span className="text-muted-foreground">{tax.title} ({tax.rate}%):</span>
+                                <span className="font-medium">₹{tax.amount.toFixed(2)}</span>
+                            </div>
+                        ))}
+                        <div className="pt-2 border-t border-muted-foreground/20 flex justify-between items-center">
+                            <span className="text-muted-foreground">Grand Total:</span>
+                            <span className="font-bold text-lg">₹{total.toFixed(2)}</span>
+                        </div>
                     </div>
 
                     <AmountControl
