@@ -24,6 +24,7 @@ interface CreditNoteDetailViewProps {
     getSelectedItemsCount: () => number
     getTotalItems: () => number
     getEstimatedCreditAmount: () => { subtotal: number, tax: number, grandTotal: number }
+    onViewCreditNote: () => void
 }
 
 export function CreditNoteDetailView({
@@ -40,7 +41,8 @@ export function CreditNoteDetailView({
     onIssueCreditNote,
     getSelectedItemsCount,
     getTotalItems,
-    getEstimatedCreditAmount
+    getEstimatedCreditAmount,
+    onViewCreditNote
 }: CreditNoteDetailViewProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -209,8 +211,14 @@ export function CreditNoteDetailView({
                         {/* Footer Buttons - Fixed */}
                         <div className="px-4 py-4 border-t border-border shrink-0">
                             {selectedInvoiceInfo.returnName && (
-                                <div className="mb-3 p-2 bg-yellow-100 text-yellow-800 rounded text-sm font-semibold border border-yellow-200 flex items-center justify-center gap-2">
-                                    <span>⚠️ Credit Note already issued: {selectedInvoiceInfo.returnName}</span>
+                                <div className="mb-3 p-3 bg-yellow-100 text-yellow-800 rounded text-sm font-semibold border border-yellow-200 flex items-center justify-between gap-2">
+                                    <span className="flex items-center gap-2">⚠️ Credit Note already issued: {selectedInvoiceInfo.returnName}</span>
+                                    <button
+                                        onClick={onViewCreditNote}
+                                        className="px-3 py-1 bg-yellow-200 hover:bg-yellow-300 text-yellow-900 rounded text-xs border border-yellow-300 transition-colors"
+                                    >
+                                        View
+                                    </button>
                                 </div>
                             )}
                             <div className="flex gap-3">

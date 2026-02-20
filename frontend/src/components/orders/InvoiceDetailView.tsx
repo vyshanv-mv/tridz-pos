@@ -131,15 +131,19 @@ export function InvoiceDetailView({
                                         <span className="text-sm text-muted-foreground">Subtotal:</span>
                                         <span className="text-sm text-foreground">{formatCurrency(subtotal)}</span>
                                     </div>
-                                    {tax > 0 && (
+                                    {tax !== 0 && (
                                         <div className="flex justify-between">
                                             <span className="text-sm text-muted-foreground">Tax:</span>
                                             <span className="text-sm text-foreground">{formatCurrency(tax)}</span>
                                         </div>
                                     )}
                                     <div className="flex items-center justify-between pt-2 border-t border-border">
-                                        <span className="text-lg font-semibold text-foreground">Grand Total:</span>
-                                        <span className="text-lg font-bold text-primary">{formatCurrency(selectedInvoiceInfo.grand_total)}</span>
+                                        <span className="text-lg font-semibold text-foreground">
+                                            {selectedInvoiceInfo.is_return === 1 ? 'Return Amount:' : 'Grand Total:'}
+                                        </span>
+                                        <span className={`text-lg font-bold ${selectedInvoiceInfo.is_return === 1 ? 'text-red-600' : 'text-primary'}`}>
+                                            {formatCurrency(selectedInvoiceInfo.grand_total)}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
