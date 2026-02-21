@@ -1,12 +1,13 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Check, FileText } from "lucide-react"
+import { buildTaxRows } from "@/lib/utils"
 
 interface LastInvoiceDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     invoice: any
-    formatCurrency: (amount: number) => string
+    formatCurrency: (amount: number, currency?: string) => string
 }
 
 export function LastInvoiceDialog({ open, onOpenChange, invoice, formatCurrency }: LastInvoiceDialogProps) {
@@ -14,8 +15,7 @@ export function LastInvoiceDialog({ open, onOpenChange, invoice, formatCurrency 
 
     // Calculate subtotal from items
     const subtotal = invoice.items?.reduce((sum: number, item: any) => sum + (item.rate * Math.abs(item.qty)), 0) || 0
-    // Tax is usually total_taxes_and_charges in ERPNext
-    const tax = invoice.total_taxes_and_charges || 0
+    const taxRows = buildTaxRows(invoice.taxes, 1, invoice.total_taxes_and_charges)
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,11 +68,11 @@ export function LastInvoiceDialog({ open, onOpenChange, invoice, formatCurrency 
                                         <p className="text-sm font-medium text-foreground">{item.item_name || item.item_code}</p>
                                         <p className="text-xs text-muted-foreground font-mono">{item.item_code}</p>
                                         <div className="text-xs text-muted-foreground mt-1">
-                                            {formatCurrency(item.rate)} × {Math.abs(item.qty)}
+                                            {formatCurrency(item.rate, invoice.currency)} × {Math.abs(item.qty)}
                                         </div>
                                     </div>
                                     <span className="text-sm font-semibold text-foreground min-w-[80px] text-right">
-                                        {formatCurrency(item.rate * Math.abs(item.qty))}
+                                        {formatCurrency(item.rate * Math.abs(item.qty), invoice.currency)}
                                     </span>
                                 </div>
                             ))}
@@ -83,17 +83,19 @@ export function LastInvoiceDialog({ open, onOpenChange, invoice, formatCurrency 
                     <div className="bg-muted/10 p-4 rounded-xl space-y-3">
                         <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">Subtotal:</span>
-                            <span className="font-medium text-foreground">{formatCurrency(subtotal)}</span>
+                            <span className="font-medium text-foreground">{formatCurrency(subtotal, invoice.currency)}</span>
                         </div>
-                        {tax > 0 && (
-                            <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">Tax (18% GST):</span>
-                                <span className="font-medium text-foreground">{formatCurrency(tax)}</span>
+                        {taxRows.map((tax, i) => (
+                            <div key={i} className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">
+                                    {tax.label}{tax.rate > 0 ? ` (${tax.rate}%)` : ""}:
+                                </span>
+                                <span className="font-medium text-foreground">{formatCurrency(tax.amount, invoice.currency)}</span>
                             </div>
-                        )}
+                        ))}
                         <div className="flex justify-between items-center pt-3 border-t border-border mt-2">
                             <span className="text-lg font-semibold text-foreground">Grand Total:</span>
-                            <span className="text-xl font-bold text-foreground">{formatCurrency(invoice.grand_total)}</span>
+                            <span className="text-xl font-bold text-foreground">{formatCurrency(invoice.grand_total, invoice.currency)}</span>
                         </div>
                     </div>
 

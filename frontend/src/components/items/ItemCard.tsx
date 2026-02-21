@@ -6,6 +6,7 @@ import { Plus, Info } from "lucide-react"
 import { useState } from "react"
 import { ItemInfoDialog } from "./ItemInfoDialog"
 import { useToast } from "@/hooks/use-toast"
+import { formatCurrency } from "@/lib/utils"
 
 interface ItemCardProps {
   item: Item
@@ -14,6 +15,7 @@ interface ItemCardProps {
 export function ItemCard({ item }: ItemCardProps) {
   const addItem = useCartStore(state => state.addItem)
   const showItemImages = usePosStore(state => state.showItemImages)
+  const profile = usePosStore(state => state.profile)
   const [showInfoDialog, setShowInfoDialog] = useState(false)
   const { toast } = useToast()
 
@@ -67,7 +69,7 @@ export function ItemCard({ item }: ItemCardProps) {
           <div className="flex items-center justify-between mt-auto pt-2 md:pt-4">
             <div>
               <span className="text-lg md:text-xl font-bold text-primary">
-                ₹{Math.floor(item.standard_rate ?? 0)}
+                {formatCurrency(item.standard_rate ?? 0, profile?.currency)}
               </span>
               <div className={`text-sm md:text-xs font-semibold mt-0.5 ${stockColor}`}>
                 Stock: {stockQty}

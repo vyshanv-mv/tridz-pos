@@ -24,6 +24,7 @@ interface CreditNoteDetailViewProps {
     getSelectedItemsCount: () => number
     getTotalItems: () => number
     getEstimatedCreditAmount: () => { subtotal: number, tax: number, grandTotal: number }
+    getEstimatedTaxRows: () => { label: string; rate: number; amount: number }[]
     onViewCreditNote: () => void
 }
 
@@ -42,6 +43,7 @@ export function CreditNoteDetailView({
     getSelectedItemsCount,
     getTotalItems,
     getEstimatedCreditAmount,
+    getEstimatedTaxRows,
     onViewCreditNote
 }: CreditNoteDetailViewProps) {
     return (
@@ -136,7 +138,7 @@ export function CreditNoteDetailView({
                                                         </h5>
                                                         <p className="text-[13px] text-muted-foreground">{item.item_code}</p>
                                                         <p className="text-sm text-foreground mt-1">
-                                                            ₹{item.rate} × {itemState.maxQty} = {formatCurrency(item.rate * itemState.maxQty)}
+                                                            {formatCurrency(item.rate, selectedInvoiceInfo.currency)} × {itemState.maxQty} = {formatCurrency(item.rate * itemState.maxQty, selectedInvoiceInfo.currency)}
                                                         </p>
 
                                                         {/* Quantity Controls */}
@@ -189,16 +191,26 @@ export function CreditNoteDetailView({
                                             <div className="space-y-2">
                                                 <div className="flex justify-between items-center text-sm">
                                                     <span className="text-muted-foreground">Subtotal:</span>
-                                                    <span className="font-medium">{formatCurrency(getEstimatedCreditAmount().subtotal)}</span>
+                                                    <span className="font-medium">{formatCurrency(getEstimatedCreditAmount().subtotal, selectedInvoiceInfo.currency)}</span>
                                                 </div>
-                                                <div className="flex justify-between items-center text-sm">
-                                                    <span className="text-muted-foreground">Tax:</span>
-                                                    <span className="font-medium">{formatCurrency(getEstimatedCreditAmount().tax)}</span>
-                                                </div>
+                                                {getEstimatedTaxRows().map((row, i) => (
+                                                    <div key={i} className="flex justify-between items-center text-sm">
+                                                        <span className="text-muted-foreground">
+                                                            {row.label}{row.rate > 0 ? ` (${row.rate}%)` : ""}:
+                                                        </span>
+                                                        <span className="font-medium">{formatCurrency(row.amount, selectedInvoiceInfo.currency)}</span>
+                                                    </div>
+                                                ))}
+                                                {getEstimatedTaxRows().length === 0 && getEstimatedCreditAmount().tax > 0 && (
+                                                    <div className="flex justify-between items-center text-sm">
+                                                        <span className="text-muted-foreground">Tax:</span>
+                                                        <span className="font-medium">{formatCurrency(getEstimatedCreditAmount().tax, selectedInvoiceInfo.currency)}</span>
+                                                    </div>
+                                                )}
                                                 <div className="border-t border-border mt-2 pt-2 flex justify-between items-center">
                                                     <span className="text-base font-bold text-foreground">Total Refund:</span>
                                                     <span className="text-lg font-bold text-emerald-600">
-                                                        {formatCurrency(getEstimatedCreditAmount().grandTotal)}
+                                                        {formatCurrency(getEstimatedCreditAmount().grandTotal, selectedInvoiceInfo.currency)}
                                                     </span>
                                                 </div>
                                             </div>

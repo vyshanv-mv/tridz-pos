@@ -5,7 +5,7 @@ import { CreditNoteInvoiceList } from "./CreditNoteInvoiceList"
 import { useEffect, useState } from "react"
 import { getPaidInvoices, getInvoice, createDraftPOSInvoice } from "@/api/invoice"
 import { checkIfInvoiceHasReturn } from "@/api/returnCheck"
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, buildTaxRows } from "@/lib/utils"
 import { usePosStore } from "@/store/posStore"
 import { useToast } from "@/hooks/use-toast"
 
@@ -214,6 +214,27 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
         }
     }
 
+    const getEstimatedTaxRows = () => {
+        if (!selectedInvoiceInfo?.items) return []
+
+        const totalBasis = selectedInvoiceInfo.items.reduce((sum: number, item: any) =>
+            sum + (Math.abs(item.qty) * item.rate), 0)
+
+        const selectedBasis = selectedInvoiceInfo.items.reduce((sum: number, item: any) => {
+            const itemState = selectedItems[item.name]
+            return itemState?.selected ? sum + (itemState.qty * item.rate) : sum
+        }, 0)
+
+        if (totalBasis === 0) return []
+        const ratio = selectedBasis / totalBasis
+
+        return buildTaxRows(
+            selectedInvoiceInfo.taxes,
+            ratio,
+            selectedInvoiceInfo.total_taxes_and_charges
+        )
+    }
+
 
 
     const handleIssueCreditNote = async () => {
@@ -329,6 +350,7 @@ export function CreditNoteDialog({ open, onOpenChange }: CreditNoteDialogProps) 
                 getSelectedItemsCount={getSelectedItemsCount}
                 getTotalItems={getTotalItems}
                 getEstimatedCreditAmount={getEstimatedCreditAmount}
+                getEstimatedTaxRows={getEstimatedTaxRows}
                 onViewCreditNote={handleViewCreditNote}
             />
         )

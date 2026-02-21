@@ -1,14 +1,16 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { formatCurrency } from "@/lib/utils"
 
 interface AmountControlProps {
     amount: string
     setAmount: (val: string) => void
     total: number
+    currency?: string
 }
 
-export function AmountControl({ amount, setAmount, total }: AmountControlProps) {
+export function AmountControl({ amount, setAmount, total, currency }: AmountControlProps) {
     const addCash = (value: number) => {
         const current = parseFloat(amount) || 0
         setAmount((current + value).toFixed(2))
@@ -38,7 +40,7 @@ export function AmountControl({ amount, setAmount, total }: AmountControlProps) 
                 </Button>
                 {[100, 200, 500, 1000, 2000].map(val => (
                     <Button key={val} variant="outline" size="sm" onClick={() => addCash(val)} className="whitespace-nowrap">
-                        +₹{val}
+                        +{formatCurrency(val, currency)}
                     </Button>
                 ))}
             </div>

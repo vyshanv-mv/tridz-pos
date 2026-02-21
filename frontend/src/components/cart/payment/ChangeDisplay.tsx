@@ -1,11 +1,12 @@
-import { cn } from "@/lib/utils"
+import { cn, formatCurrency } from "@/lib/utils"
 
 interface ChangeDisplayProps {
     amount: string
     total: number
+    currency?: string
 }
 
-export function ChangeDisplay({ amount, total }: ChangeDisplayProps) {
+export function ChangeDisplay({ amount, total, currency }: ChangeDisplayProps) {
     const currentAmount = parseFloat(amount) || 0
     const balance = currentAmount - total
     const isChange = balance >= 0
@@ -28,7 +29,7 @@ export function ChangeDisplay({ amount, total }: ChangeDisplayProps) {
             <span className={cn("font-bold text-xl",
                 isChange ? "text-green-800 dark:text-green-300" : "text-orange-800 dark:text-orange-300"
             )}>
-                ₹{displayAmount.toFixed(2)}
+                {formatCurrency(displayAmount, currency)}
             </span>
         </div>
     )
