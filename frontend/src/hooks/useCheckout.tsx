@@ -5,7 +5,6 @@ import { useInvoiceStore } from "@/store/invoiceStore"
 import { createDraftPOSInvoice, submitInvoice } from "@/api/invoice"
 import { printERPNextDoc } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
-import { CircleCheck } from "lucide-react"
 import type { Customer } from "@/types/customer"
 import type { Payment } from "@/types/invoice"
 
@@ -73,12 +72,7 @@ export function useCheckout() {
             }
 
             toast({
-                description: (
-                    <div className="flex items-center gap-2">
-                        <CircleCheck className="h-4 w-4 text-green-600" />
-                        <span>Order processed successfully </span>
-                    </div>
-                )
+                title: "Order processed successfully",
             })
 
             // Close the current order tab

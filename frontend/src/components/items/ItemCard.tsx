@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import type { Item } from "@/types/item"
 import { useCartStore } from "@/store/cartStore"
 import { usePosStore } from "@/store/posStore"
-import { Plus, Info, CircleCheck } from "lucide-react"
+import { Plus, Info } from "lucide-react"
 import { useState } from "react"
 import { ItemInfoDialog } from "./ItemInfoDialog"
 import { useToast } from "@/hooks/use-toast"
@@ -24,12 +24,7 @@ export function ItemCard({ item }: ItemCardProps) {
       rate: item.standard_rate ?? 0,
     })
     toast({
-      description: (
-        <div className="flex items-center gap-2">
-          <CircleCheck className="h-4 w-4 text-green-600" />
-          <span>{item.item_name} has been added to cart.</span>
-        </div>
-      ),
+      title: `${item.item_name} added to cart`,
       duration: 1000,
     })
   }
