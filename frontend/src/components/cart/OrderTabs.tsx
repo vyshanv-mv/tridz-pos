@@ -1,4 +1,4 @@
-import { Plus, X, CircleCheck } from "lucide-react"
+import { Plus, X } from "lucide-react"
 import { useCartStore } from "@/store/cartStore"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
@@ -44,12 +44,7 @@ export function OrderTabs() {
                 onClick={() => {
                     newOrder()
                     toast({
-                        description: (
-                            <div className="flex items-center gap-2">
-                                <CircleCheck className="h-4 w-4 text-green-600" />
-                                <span>A new order has been started.</span>
-                            </div>
-                        ),
+                        title: "New order started",
                         duration: 1500,
                     })
                 }}

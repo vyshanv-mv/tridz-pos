@@ -7,7 +7,6 @@ import { usePosStore } from "@/store/posStore"
 import { CartItem } from "./CartItem"
 import { PaymentDialog } from "./PaymentDialog"
 import { useToast } from "@/hooks/use-toast"
-import { CircleCheck } from "lucide-react"
 
 import { OrderTabs } from "./OrderTabs"
 import type { Customer } from "@/types/customer"
@@ -43,12 +42,7 @@ export function CartPanel({ onPaymentSuccess }: CartPanelProps) {
     if (itemToRemove) {
       removeItem(itemToRemove)
       toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <CircleCheck className="h-4 w-4 text-green-600" />
-            <span>Successfully removed from cart</span>
-          </div>
-        ),
+        title: "Removed from cart",
       })
       setItemToRemove(null)
     }
