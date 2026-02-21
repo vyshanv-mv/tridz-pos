@@ -42,7 +42,7 @@ export function CartItem({
 
             {/* Sub-header: Code & Unit Price */}
             <div className="text-xs text-muted-foreground mb-3">
-                <div className="uppercase tracking-wide text-[10px] text-muted-foreground font-medium mb-0.5">
+                <div className="uppercase tracking-wide text-xs text-muted-foreground font-medium mb-0.5">
                     {item_code}
                 </div>
                 <div>{formatCurrency(rate, profile?.currency)} each</div>

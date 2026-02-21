@@ -136,7 +136,7 @@ export function CreditNoteDetailView({
                                                         <h5 className="text-sm lg:text-base font-semibold text-foreground">
                                                             {item.item_name || item.item_code}
                                                         </h5>
-                                                        <p className="text-[13px] text-muted-foreground">{item.item_code}</p>
+                                                        <p className="text-sm text-muted-foreground">{item.item_code}</p>
                                                         <p className="text-sm text-foreground mt-1">
                                                             {formatCurrency(item.rate, selectedInvoiceInfo.currency)} × {itemState.maxQty} = {formatCurrency(item.rate * itemState.maxQty, selectedInvoiceInfo.currency)}
                                                         </p>
