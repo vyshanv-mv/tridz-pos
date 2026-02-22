@@ -71,7 +71,7 @@ export function LastInvoiceDialog({ open, onOpenChange, invoice, formatCurrency 
                                             {formatCurrency(item.rate, invoice.currency)} × {Math.abs(item.qty)}
                                         </div>
                                     </div>
-                                    <span className="text-sm font-semibold text-foreground min-w-[80px] text-right">
+                                    <span className="text-sm font-semibold text-foreground min-w-20 text-right">
                                         {formatCurrency(item.rate * Math.abs(item.qty), invoice.currency)}
                                     </span>
                                 </div>
