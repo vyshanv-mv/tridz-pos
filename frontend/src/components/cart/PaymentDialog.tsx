@@ -17,6 +17,7 @@ import { CustomerSearch } from "./payment/CustomerSearch"
 import { PaymentModeGrid } from "./payment/PaymentModeGrid"
 import { AmountControl } from "./payment/AmountControl"
 import { ChangeDisplay } from "./payment/ChangeDisplay"
+import { formatCurrency } from "@/lib/utils"
 
 interface PaymentDialogProps {
     open: boolean
@@ -125,17 +126,17 @@ export function PaymentDialog({
                     <div className="bg-muted/20 p-4 rounded-lg space-y-2 mb-6">
                         <div className="flex justify-between items-center text-sm">
                             <span className="text-muted-foreground">Subtotal:</span>
-                            <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                            <span className="font-medium">{formatCurrency(subtotal, profile.currency)}</span>
                         </div>
                         {taxBreakdown.map((tax, index) => (
                             <div key={index} className="flex justify-between items-center text-sm">
                                 <span className="text-muted-foreground">{tax.title} ({tax.rate}%):</span>
-                                <span className="font-medium">₹{tax.amount.toFixed(2)}</span>
+                                <span className="font-medium">{formatCurrency(tax.amount, profile.currency)}</span>
                             </div>
                         ))}
                         <div className="pt-2 border-t border-muted-foreground/20 flex justify-between items-center">
                             <span className="text-muted-foreground">Grand Total:</span>
-                            <span className="font-bold text-lg">₹{total.toFixed(2)}</span>
+                            <span className="font-bold text-lg">{formatCurrency(total, profile.currency)}</span>
                         </div>
                     </div>
 
@@ -143,11 +144,13 @@ export function PaymentDialog({
                         amount={amount}
                         setAmount={setAmount}
                         total={total}
+                        currency={profile.currency}
                     />
 
                     <ChangeDisplay
                         amount={amount}
                         total={total}
+                        currency={profile.currency}
                     />
                 </div>
 

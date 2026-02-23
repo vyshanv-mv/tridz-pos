@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Trash2, Plus, Minus } from "lucide-react"
+import { formatCurrency } from "@/lib/utils"
+import { usePosStore } from "@/store/posStore"
 
 interface CartItemProps {
     item_code: string
@@ -21,6 +23,7 @@ export function CartItem({
     onReduce
 }: CartItemProps) {
     const total = qty * rate
+    const { profile } = usePosStore()
 
     return (
         <div className="bg-muted/20 rounded-lg p-3 mb-2 border border-transparent hover:border-border transition-colors">
@@ -39,10 +42,10 @@ export function CartItem({
 
             {/* Sub-header: Code & Unit Price */}
             <div className="text-xs text-muted-foreground mb-3">
-                <div className="uppercase tracking-wide text-[10px] text-muted-foreground font-medium mb-0.5">
+                <div className="uppercase tracking-wide text-xs text-muted-foreground font-medium mb-0.5">
                     {item_code}
                 </div>
-                <div>₹{Math.floor(rate)} each</div>
+                <div>{formatCurrency(rate, profile?.currency)} each</div>
             </div>
 
             {/* Controls Row */}
@@ -74,7 +77,7 @@ export function CartItem({
 
                 {/* Total Price */}
                 <div className="font-bold text-base text-primary">
-                    ₹{total.toFixed(2)}
+                    {formatCurrency(total, profile?.currency)}
                 </div>
             </div>
         </div>

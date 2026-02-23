@@ -170,7 +170,7 @@ export default function Pos() {
         >
           <span>Checkout ({totalItemsCount} items)</span>
           <span className="opacity-60 mx-1">•</span>
-          <span>₹{grandTotal.toFixed(2)}</span>
+          <span>{formatCurrency(grandTotal, profile?.currency)}</span>
         </Button>
       </div>
 

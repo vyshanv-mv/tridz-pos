@@ -1,5 +1,6 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Loader2, CreditCard } from "lucide-react"
+import { buildTaxRows } from "@/lib/utils"
 
 interface InvoiceDetailViewProps {
     open: boolean
@@ -7,7 +8,7 @@ interface InvoiceDetailViewProps {
     loadingDetails: boolean
     selectedInvoiceInfo: any
     onBack: () => void
-    formatCurrency: (amount: number) => string
+    formatCurrency: (amount: number, currency?: string) => string
 }
 
 export function InvoiceDetailView({
@@ -21,7 +22,12 @@ export function InvoiceDetailView({
     // Calculate subtotal and tax
     const subtotal = selectedInvoiceInfo?.items?.reduce((sum: number, item: any) =>
         sum + (item.rate * Math.abs(item.qty)), 0) || 0
-    const tax = (selectedInvoiceInfo?.total_taxes_and_charges || 0)
+
+    const taxRows = buildTaxRows(
+        selectedInvoiceInfo?.taxes,
+        1,
+        selectedInvoiceInfo?.total_taxes_and_charges
+    )
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -113,11 +119,11 @@ export function InvoiceDetailView({
                                                 <p className="text-sm font-medium text-foreground">{item.item_name || item.item_code}</p>
                                                 <p className="text-xs text-muted-foreground mt-0.5">{item.item_code}</p>
                                                 <p className="text-xs text-muted-foreground mt-1">
-                                                    ₹{item.rate} × {Math.abs(item.qty)}
+                                                    {formatCurrency(item.rate, selectedInvoiceInfo.currency)} × {Math.abs(item.qty)}
                                                 </p>
                                             </div>
                                             <p className="text-sm font-semibold text-foreground">
-                                                {formatCurrency(item.rate * Math.abs(item.qty))}
+                                                {formatCurrency(item.rate * Math.abs(item.qty), selectedInvoiceInfo.currency)}
                                             </p>
                                         </div>
                                     ))}
@@ -129,20 +135,22 @@ export function InvoiceDetailView({
                                 <div className="space-y-2 p-4 bg-muted/10  rounded-lg">
                                     <div className="flex justify-between">
                                         <span className="text-sm text-muted-foreground">Subtotal:</span>
-                                        <span className="text-sm text-foreground">{formatCurrency(subtotal)}</span>
+                                        <span className="text-sm text-foreground">{formatCurrency(subtotal, selectedInvoiceInfo.currency)}</span>
                                     </div>
-                                    {tax !== 0 && (
-                                        <div className="flex justify-between">
-                                            <span className="text-sm text-muted-foreground">Tax:</span>
-                                            <span className="text-sm text-foreground">{formatCurrency(tax)}</span>
+                                    {taxRows.map((tax, i) => (
+                                        <div key={i} className="flex justify-between">
+                                            <span className="text-sm text-muted-foreground">
+                                                {tax.label}{tax.rate > 0 ? ` (${tax.rate}%)` : ""}:
+                                            </span>
+                                            <span className="text-sm text-foreground">{formatCurrency(tax.amount, selectedInvoiceInfo.currency)}</span>
                                         </div>
-                                    )}
+                                    ))}
                                     <div className="flex items-center justify-between pt-2 border-t border-border">
                                         <span className="text-lg font-semibold text-foreground">
                                             {selectedInvoiceInfo.is_return === 1 ? 'Return Amount:' : 'Grand Total:'}
                                         </span>
                                         <span className={`text-lg font-bold ${selectedInvoiceInfo.is_return === 1 ? 'text-red-600' : 'text-primary'}`}>
-                                            {formatCurrency(selectedInvoiceInfo.grand_total)}
+                                            {formatCurrency(selectedInvoiceInfo.grand_total, selectedInvoiceInfo.currency)}
                                         </span>
                                     </div>
                                 </div>

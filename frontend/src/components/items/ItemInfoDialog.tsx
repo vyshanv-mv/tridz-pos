@@ -6,6 +6,8 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { Item } from "@/types/item"
+import { usePosStore } from "@/store/posStore"
+import { formatCurrency } from "@/lib/utils"
 
 interface ItemInfoDialogProps {
     item: Item
@@ -15,6 +17,7 @@ interface ItemInfoDialogProps {
 
 export function ItemInfoDialog({ item, open, onOpenChange }: ItemInfoDialogProps) {
     const stockQty = item.actual_qty ?? 0
+    const profile = usePosStore(state => state.profile)
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -51,7 +54,7 @@ export function ItemInfoDialog({ item, open, onOpenChange }: ItemInfoDialogProps
                         <div className="flex items-center justify-between py-3 border-b border-border">
                             <span className="text-base text-muted-foreground">Price:</span>
                             <span className="text-base font-medium text-foreground">
-                                ₹{Math.floor(item.standard_rate ?? 0)}
+                                {formatCurrency(item.standard_rate ?? 0, profile?.currency)}
                             </span>
                         </div>
 

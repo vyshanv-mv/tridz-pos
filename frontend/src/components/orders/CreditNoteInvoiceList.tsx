@@ -65,7 +65,7 @@ export function CreditNoteInvoiceList({
                                                 {inv.name}
                                             </span>
                                             {inv.is_return === 1 && (
-                                                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-red-100 text-red-600 rounded uppercase">
+                                                <span className="px-1.5 py-0.5 text-xs font-bold bg-red-100 text-red-600 rounded uppercase">
                                                     Return
                                                 </span>
                                             )}
