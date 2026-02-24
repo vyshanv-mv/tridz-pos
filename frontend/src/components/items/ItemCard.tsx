@@ -31,9 +31,6 @@ export function ItemCard({ item }: ItemCardProps) {
     })
   }
 
-  const stockQty = item.actual_qty ?? 0
-  const stockColor = stockQty > 0 ? "text-green-600" : "text-red-500"
-
   return (
     <>
       <div
@@ -71,9 +68,6 @@ export function ItemCard({ item }: ItemCardProps) {
               <span className="text-lg md:text-xl font-bold text-primary">
                 {formatCurrency(item.standard_rate ?? 0, profile?.currency)}
               </span>
-              <div className={`text-sm md:text-xs font-semibold mt-0.5 ${stockColor}`}>
-                Stock: {stockQty}
-              </div>
             </div>
 
             <div className="flex flex-col gap-2 items-center">
